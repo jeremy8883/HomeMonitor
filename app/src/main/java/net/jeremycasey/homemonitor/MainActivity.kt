@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
+import net.jeremycasey.homemonitor.weather.WeatherDailyForecast
+import net.jeremycasey.homemonitor.weather.WeatherSummary
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,25 +31,65 @@ class MainActivity : ComponentActivity() {
   }
 }
 
+val mockWeatherSummary = WeatherSummary(
+  apparentTemp = 10.4,
+  deltaT = 0.4,
+  gustKmh = 15.0,
+  windGustSpeed = 8.0,
+  airTemperature = 11.5,
+  dewPoint = 10.7,
+  pres = 1027.7,
+  mslPres = 1027.7,
+  qnhPres = 1027.7,
+  rainHour = 0.4,
+  rainTen = 0.0,
+  relHumidity = 95.0,
+  visKm = 10.0,
+  windDir = "WSW",
+  windDirDeg = 249.0,
+  windSpeedKmh = 7.0,
+  windSpeed = 4.0,
+)
+
+val mockWeatherDailyForecast = WeatherDailyForecast(
+  airTemperatureMinimum = null,
+  airTemperatureMaximum = 15.0,
+  endTimeLocal = "2021-05-28T00:00:00+10:00",
+  endTimeUtc = "2021-05-28T00:00:00+10:00",
+  forecastIconCode = "11",
+  index = 0,
+  startTimeLocal = "2021-05-27T05:00:00+10:00",
+  startTimeUtc = "2021-05-26T19:00:00Z",
+  precis = "Showers.",
+  probabilityOfPrecipitation = "90%"
+)
+
 @Composable
 fun WeatherWidget() {
-  WeatherWidgetView(current = 19.5, min = 10, max = 20)
+  WeatherWidgetView(mockWeatherSummary, mockWeatherDailyForecast)
 }
 
 @Composable
-fun WeatherWidgetView(current: Number, min: Number, max: Number) {
+fun WeatherWidgetView(summary: WeatherSummary, dailyForecast: WeatherDailyForecast) {
   Column (modifier = Modifier.padding(16.dp)) {
     Row {
       Text(text = "Current: ")
-      Text(text = "$current")
+      Text(text = "${summary.airTemperature}")
     }
     Row {
-      Text(text = "Min: ")
-      Text(text = "$min")
+      Text(text = "Feels like ${summary.apparentTemp}")
     }
-    Row {
-      Text(text = "Max: ")
-      Text(text = "$max")
+    if (dailyForecast.airTemperatureMinimum != null) {
+      Row {
+        Text(text = "Min: ")
+        Text(text = "${dailyForecast.airTemperatureMinimum}")
+      }
+    }
+    if (dailyForecast.airTemperatureMaximum != null) {
+      Row {
+        Text(text = "Max: ")
+        Text(text = "${dailyForecast.airTemperatureMaximum}")
+      }
     }
   }
 }
@@ -56,6 +98,6 @@ fun WeatherWidgetView(current: Number, min: Number, max: Number) {
 @Composable
 fun DefaultPreview() {
   HomeMonitorTheme {
-    WeatherWidgetView(current = 19.5, min = 10, max = 20)
+    WeatherWidgetView(mockWeatherSummary, mockWeatherDailyForecast)
   }
 }
