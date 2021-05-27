@@ -5,7 +5,7 @@ import org.junit.Test
 import org.junit.Assert.*
 
 
-class MapBomXmlTest {
+class MapWeatherForescastXmlTest {
   @Test
   fun maps_the_xml_to_an_array() {
     val xmlMock =
@@ -160,7 +160,7 @@ class MapBomXmlTest {
       "    </forecast>\n" +
       "</product>\n"
 
-    val result = mapBomXml(xmlMock)
+    val result = mapWeatherForecastXml(xmlMock)
 
     assertEquals(
       WeatherForDay(
@@ -169,7 +169,7 @@ class MapBomXmlTest {
         endTimeLocal = "2018-03-27T00:00:00+11:00",
         endTimeUtc = "2018-03-26T13:00:00Z",
         forecastIconCode = "17",
-        index = "0",
+        index = 0,
         startTimeLocal = "2018-03-26T17:00:00+11:00",
         startTimeUtc = "2018-03-26T06:00:00Z",
         precis = "Possible shower, clearing.",

@@ -1,18 +1,11 @@
 package net.jeremycasey.homemonitor.weather
+import net.jeremycasey.homemonitor.utils.printObject
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.InputStream
 import javax.xml.parsers.DocumentBuilderFactory
-
-// Codes from:
-// http://www.bom.gov.au/catalogue/anon-ftp.shtml
-// http://www.bom.gov.au/catalogue/data-feeds.shtml
-// Current weather
-// ftp://ftp.bom.gov.au/anon/gen/fwo/IDV60920.xml
-// 7 days
-// ftp://ftp.bom.gov.au/anon/gen/fwo/IDV10753.xml
 
 data class WeatherForDay (
   val airTemperatureMinimum: String,
@@ -141,7 +134,12 @@ private fun parseXml(xml: String): Document {
   return builder.parse(xmlAsStream)
 }
 
-fun mapBomXml(xml: String): List<WeatherForDay> {
+// Codes from:
+// http://www.bom.gov.au/catalogue/anon-ftp.shtml
+// http://www.bom.gov.au/catalogue/data-feeds.shtml
+// 7 days
+// ftp://ftp.bom.gov.au/anon/gen/fwo/IDV10753.xml
+fun mapWeatherForecastXml(xml: String): List<WeatherForDay> {
   val parsed = parseXml(xml)
 
   val forecast = getForecast(parsed.documentElement)
