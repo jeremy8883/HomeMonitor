@@ -8,7 +8,6 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 fun parseXml(xml: String): Document {
   val factory = DocumentBuilderFactory.newInstance()
-  factory.setValidating(true)
   factory.setIgnoringElementContentWhitespace(true)
   val builder = factory.newDocumentBuilder()
   val xmlAsStream: InputStream = xml.byteInputStream(Charsets.UTF_8)
