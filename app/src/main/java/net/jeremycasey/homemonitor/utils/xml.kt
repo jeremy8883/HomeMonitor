@@ -60,3 +60,19 @@ fun getAttribute(node: Node, name: String): String? {
   }
   return null
 }
+
+/**
+ * Sometimes whitespace will return as a "node". This function clears all of that.
+ */
+fun filterOutTextNodes(nodeList: NodeList): ArrayList<Node> {
+  val newNodeList = arrayListOf<Node>()
+
+  for (i in 0 until nodeList.length) {
+    val item = nodeList.item(i)
+
+    if (item.nodeName != "#text") {
+      newNodeList.add(item)
+    }
+  }
+  return newNodeList
+}
