@@ -1,4 +1,4 @@
-package net.jeremycasey.homemonitor.weather
+package net.jeremycasey.homemonitor.api.bom
 import net.jeremycasey.homemonitor.utils.*
 import org.w3c.dom.Element
 import org.w3c.dom.Node

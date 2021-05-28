@@ -1,4 +1,4 @@
-package net.jeremycasey.homemonitor.weather
+package net.jeremycasey.homemonitor.api.bom
 
 import org.junit.Test
 

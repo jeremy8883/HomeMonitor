@@ -1,4 +1,4 @@
-package net.jeremycasey.homemonitor.weather
+package net.jeremycasey.homemonitor.api.bom
 import net.jeremycasey.homemonitor.utils.findNode
 import net.jeremycasey.homemonitor.utils.getAttribute
 import net.jeremycasey.homemonitor.utils.getElement
