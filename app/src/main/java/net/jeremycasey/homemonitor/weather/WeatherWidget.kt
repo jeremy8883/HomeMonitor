@@ -5,9 +5,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 
 val mockWeatherSummary = WeatherSummary(
@@ -43,13 +49,39 @@ val mockWeatherDailyForecast = WeatherDailyForecast(
   probabilityOfPrecipitation = "90%"
 )
 
-@Composable
-fun WeatherWidget() {
-  WeatherWidgetView(mockWeatherSummary, mockWeatherDailyForecast)
+class WeatherWidgetViewModel : ViewModel() {
+  private val _weatherSummary = MutableLiveData<WeatherSummary?>(null)
+  val weatherSummary: LiveData<WeatherSummary?> = _weatherSummary
+
+  private val _dailyForecast = MutableLiveData<WeatherDailyForecast?>(null)
+  val dailyForecast: LiveData<WeatherDailyForecast?> = _dailyForecast
+
+  fun onWeatherRequired() {
+
+    // _weatherSummary.value =
+    // _dailyForecast.value =
+  }
 }
 
 @Composable
-fun WeatherWidgetView(summary: WeatherSummary, dailyForecast: WeatherDailyForecast) {
+fun WeatherWidget(viewModel: WeatherWidgetViewModel) {
+  val weatherSummary by viewModel.weatherSummary.observeAsState()
+  val dailyForecast by viewModel.dailyForecast.observeAsState()
+
+  LaunchedEffect("") {
+    viewModel.onWeatherRequired()
+  }
+
+  WeatherWidgetView(weatherSummary, dailyForecast)
+}
+
+@Composable
+fun WeatherWidgetView(summary: WeatherSummary?, dailyForecast: WeatherDailyForecast?) {
+  if (summary == null || dailyForecast == null) {
+    Text("Loading...")
+    return
+  }
+
   Column (modifier = Modifier.padding(16.dp)) {
     Row {
       Text(text = "Current: ")
@@ -78,5 +110,13 @@ fun WeatherWidgetView(summary: WeatherSummary, dailyForecast: WeatherDailyForeca
 fun DefaultPreview() {
   HomeMonitorTheme {
     WeatherWidgetView(mockWeatherSummary, mockWeatherDailyForecast)
+  }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoadingPreview() {
+  HomeMonitorTheme {
+    WeatherWidgetView(null, null)
   }
 }
