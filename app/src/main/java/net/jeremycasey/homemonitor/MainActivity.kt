@@ -8,13 +8,17 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import net.jeremycasey.homemonitor.api.bom.WeatherWidget
 import net.jeremycasey.homemonitor.api.bom.WeatherWidgetViewModel
+import net.jeremycasey.homemonitor.api.bom.WeatherWidgetViewModelFactory
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 
 class MainActivity : ComponentActivity() {
-  private val weatherWidgetViewModel by viewModels<WeatherWidgetViewModel>()
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
+    val weatherWidgetViewModel by viewModels<WeatherWidgetViewModel>() {
+      WeatherWidgetViewModelFactory(this)
+    }
+
     setContent {
       HomeMonitorTheme {
         // A surface container using the 'background' color from the theme

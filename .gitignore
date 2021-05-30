@@ -13,3 +13,4 @@
 .externalNativeBuild
 .cxx
 local.properties
+/app/src/main/java/net/jeremycasey/homemonitor/private/config.kt
