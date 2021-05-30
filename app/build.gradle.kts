@@ -61,6 +61,11 @@ dependencies {
     // Integration with observables
     implementation("androidx.compose.runtime:runtime-livedata:${rootProject.extra["compose_version"]}")
     implementation("androidx.compose.runtime:runtime-rxjava2:${rootProject.extra["compose_version"]}")
+    // Used for an FTP library
+    implementation("commons-net:commons-net:3.6")
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation("androidx.activity:activity-compose:1.3.0-alpha06")
     implementation("com.google.code.gson:gson:2.8.6")

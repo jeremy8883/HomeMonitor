@@ -14,6 +14,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 
 val mockWeatherSummary = WeatherSummary(
@@ -57,9 +62,30 @@ class WeatherWidgetViewModel : ViewModel() {
   val dailyForecast: LiveData<WeatherDailyForecast?> = _dailyForecast
 
   fun onWeatherRequired() {
-
+    CoroutineScope(IO).launch {
+      try {
+        val weather = fetchWeatherSummary()
+        println("fetched and returned weather")
+        setWeatherSummaryOnMainThread(weather)
+      } catch (ex: Exception) {
+        setErrorOnMainThread(ex)
+      }
+    }
     // _weatherSummary.value =
     // _dailyForecast.value =
+  }
+
+  private suspend fun setWeatherSummaryOnMainThread(weatherSummary: WeatherSummary) {
+    withContext(Main) {
+      _weatherSummary.value = weatherSummary
+    }
+  }
+
+  private suspend fun setErrorOnMainThread(error: Exception) {
+    withContext(Main) {
+      // TODO
+      // _error.value = weatherSummary
+    }
   }
 }
 
@@ -77,7 +103,7 @@ fun WeatherWidget(viewModel: WeatherWidgetViewModel) {
 
 @Composable
 fun WeatherWidgetView(summary: WeatherSummary?, dailyForecast: WeatherDailyForecast?) {
-  if (summary == null || dailyForecast == null) {
+  if (summary == null && dailyForecast == null) {
     Text("Loading...")
     return
   }
@@ -85,18 +111,18 @@ fun WeatherWidgetView(summary: WeatherSummary?, dailyForecast: WeatherDailyForec
   Column (modifier = Modifier.padding(16.dp)) {
     Row {
       Text(text = "Current: ")
-      Text(text = "${summary.airTemperature}")
+      Text(text = "${summary?.airTemperature}")
     }
     Row {
-      Text(text = "Feels like ${summary.apparentTemp}")
+      Text(text = "Feels like ${summary?.apparentTemp}")
     }
-    if (dailyForecast.airTemperatureMinimum != null) {
+    if (dailyForecast?.airTemperatureMinimum != null) {
       Row {
         Text(text = "Min: ")
         Text(text = "${dailyForecast.airTemperatureMinimum}")
       }
     }
-    if (dailyForecast.airTemperatureMaximum != null) {
+    if (dailyForecast?.airTemperatureMaximum != null) {
       Row {
         Text(text = "Max: ")
         Text(text = "${dailyForecast.airTemperatureMaximum}")

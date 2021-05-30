@@ -73,10 +73,8 @@ private fun getWeatherSummary(documentElement: Element): WeatherSummary {
  * Maps the following response:
  *   ftp://ftp.bom.gov.au/anon/gen/fwo/IDV60920.xml
  * Codes from:
- *   http:www.bom.gov.au/catalogue/anon-ftp.shtml
- *   http:www.bom.gov.au/catalogue/data-feeds.shtml
- * 7 days
- *   ftp://ftp.bom.gov.au/anon/gen/fwo/IDV10753.xml
+ *   http://www.bom.gov.au/catalogue/anon-ftp.shtml
+ *   http://www.bom.gov.au/catalogue/data-feeds.shtml
  */
 fun mapWeatherSummary(xml: String): WeatherSummary {
   val parsed = parseXml(xml)
