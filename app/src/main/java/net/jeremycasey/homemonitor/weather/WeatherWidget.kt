@@ -8,24 +8,34 @@ import Sys
 import Weather
 import Wind
 import android.content.Context
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
+import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.color.MaterialColors
 import fetchCurrentWeather
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
+import net.jeremycasey.homemonitor.utils.round
 
 val mockCurrentWeather = CurrentWeather(
   coord = Coord( lon = 144.9633, lat = -37.814 ),
@@ -110,40 +120,80 @@ fun WeatherWidget(viewModel: WeatherWidgetViewModel) {
 @Composable
 fun WeatherWidgetView(currentWeather: CurrentWeather?, fetchError: Exception?, onRetryClick: () -> Any) {
   if (fetchError != null) {
-    Column (modifier = Modifier.padding(16.dp)) {
-      Text("Error: ${fetchError.message}")
-      Button(onClick = {
-        println("clicked??")
-        onRetryClick()
-      }) {
-        Text("Retry")
-      }
+    Card(elevation = 2.dp) {
+      Column (modifier = Modifier.padding(16.dp)) {
+        Text(
+          text = "Error: ${fetchError.message}",
+          style = TextStyle(
+            color = MaterialTheme.colors.error
+          ),
+          modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 20.dp)
+        )
+        Button(onClick = {
+          println("clicked??")
+          onRetryClick()
+        }) {
+          Text("Retry")
+        }
 
+      }
     }
     return
   }
   if (currentWeather == null) {
-    Column (modifier = Modifier.padding(16.dp)) {
-      Text("Loading...")
+    Card(elevation = 2.dp) {
+      Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+          text = "Loading...",
+          style = TextStyle(
+            fontStyle = FontStyle.Italic,
+            color = Color(0xffbababa)
+          )
+        )
+      }
     }
     return
   }
 
-  Column (modifier = Modifier.padding(16.dp)) {
-    Row {
-      Text(text = "Current: ")
-      Text(text = "${currentWeather.main.temp}")
-    }
-    Row {
-      Text(text = "Feels like ${currentWeather.main.feelsLike}")
-    }
-    Row {
-      Text(text = "Min: ")
-      Text(text = "${currentWeather.main.tempMin}")
-    }
-    Row {
-      Text(text = "Max: ")
-      Text(text = "${currentWeather.main.tempMax}")
+  Card(elevation = 2.dp) {
+    Column(modifier = Modifier.padding(16.dp)) {
+      Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        Text(
+          text = "${round(currentWeather.main.temp, 0).toInt()}°",
+          style = MaterialTheme.typography.h1 + TextStyle(
+            lineHeight = 0.sp
+          ),
+          modifier = Modifier.padding(0.dp, 0.dp, 20.dp, 0.dp)
+        )
+        Column {
+          Text(
+            text = "Feels like ${round(currentWeather.main.feelsLike, 0).toInt()}°",
+            style = TextStyle(
+              color = Color(0xFF878787),
+              fontSize = 14.sp,
+            )
+          )
+          Row {
+            Text(
+              text = "${round(currentWeather.main.tempMax, 0).toInt()}°",
+              style = TextStyle(
+                color = Color(0xff878787),
+                fontSize = 18.sp,
+              )
+            )
+            Text(
+              text = " ${round(currentWeather.main.tempMin, 0).toInt()}°",
+              style = TextStyle(
+                color = Color(0xffbababa),
+                fontSize = 18.sp,
+              )
+            )
+          }
+        }
+      }
     }
   }
 }
