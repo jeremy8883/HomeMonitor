@@ -15,11 +15,15 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import fetchCurrentWeather
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 
@@ -54,29 +58,53 @@ val mockCurrentWeather = CurrentWeather(
   cod = 200
 )
 
-@Composable
-fun WeatherWidget(context: Context) {
-  var (currentWeather, setCurrentWeather) = remember { mutableStateOf<CurrentWeather?>(null) }
-  var (fetchError, setFetchError) = remember { mutableStateOf<Exception?>(null) }
+class WeatherWidgetViewModelFactory(context: Context) :
+  ViewModelProvider.Factory {
+
+  private val _context: Context
+
+  init {
+    _context = context
+  }
+
+  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    return WeatherWidgetViewModel(_context) as T
+  }
+}
+
+class WeatherWidgetViewModel(context: Context) : ViewModel() {
+  private val _currentWeather = MutableLiveData<CurrentWeather?>(null)
+  val currentWeather: LiveData<CurrentWeather?> = _currentWeather
+
+  private val _context = context
+
+  private val _fetchError = MutableLiveData<Exception?>(null)
+  val fetchError: LiveData<Exception?> = _fetchError
 
   fun onWeatherRequired() {
+    _fetchError.value = null
     fetchCurrentWeather(
-      context,
-      { _currentWeather: CurrentWeather ->
-        setCurrentWeather(_currentWeather)
-        setFetchError(null)
+      _context,
+      { currentWeather: CurrentWeather ->
+        _currentWeather.value = currentWeather
       },
       { error: Exception ->
-        setFetchError(error)
+        _fetchError.value = error
       }
     )
   }
+}
+
+@Composable
+fun WeatherWidget(viewModel: WeatherWidgetViewModel) {
+  val currentWeather by viewModel.currentWeather.observeAsState()
+  val fetchError by viewModel.fetchError.observeAsState()
 
   LaunchedEffect("") {
-    onWeatherRequired()
+    viewModel.onWeatherRequired()
   }
 
-  WeatherWidgetView(currentWeather, fetchError, { onWeatherRequired() })
+  WeatherWidgetView(currentWeather, fetchError, { viewModel.onWeatherRequired() })
 }
 
 @Composable
