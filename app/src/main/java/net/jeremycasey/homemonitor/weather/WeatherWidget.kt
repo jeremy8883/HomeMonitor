@@ -3,14 +3,15 @@ package net.jeremycasey.homemonitor.api.bom
 import Clouds
 import Coord
 import CurrentWeather
+import Main
 import Sys
 import Weather
 import Wind
-import Main
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,9 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import androidx.lifecycle.ViewModelProvider
 import fetchCurrentWeather
+import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 
 val mockCurrentWeather = CurrentWeather(
   coord = Coord( lon = 144.9633, lat = -37.814 ),
@@ -102,17 +103,28 @@ fun WeatherWidget(viewModel: WeatherWidgetViewModel) {
     viewModel.onWeatherRequired()
   }
 
-  WeatherWidgetView(currentWeather, fetchError)
+  WeatherWidgetView(currentWeather, fetchError, { viewModel.onWeatherRequired() })
 }
 
 @Composable
-fun WeatherWidgetView(currentWeather: CurrentWeather?, fetchError: Exception?) {
+fun WeatherWidgetView(currentWeather: CurrentWeather?, fetchError: Exception?, onRetryClick: () -> Any) {
   if (fetchError != null) {
-    Text("Error: ${fetchError.message}")
+    Column (modifier = Modifier.padding(16.dp)) {
+      Text("Error: ${fetchError.message}")
+      Button(onClick = {
+        println("clicked??")
+        onRetryClick()
+      }) {
+        Text("Retry")
+      }
+
+    }
     return
   }
   if (currentWeather == null) {
-    Text("Loading...")
+    Column (modifier = Modifier.padding(16.dp)) {
+      Text("Loading...")
+    }
     return
   }
 
@@ -139,7 +151,7 @@ fun WeatherWidgetView(currentWeather: CurrentWeather?, fetchError: Exception?) {
 @Composable
 fun DefaultPreview() {
   HomeMonitorTheme {
-    WeatherWidgetView(mockCurrentWeather, null)
+    WeatherWidgetView(mockCurrentWeather, null, { })
   }
 }
 
@@ -147,7 +159,7 @@ fun DefaultPreview() {
 @Composable
 fun LoadingPreview() {
   HomeMonitorTheme {
-    WeatherWidgetView(null, null)
+    WeatherWidgetView(null, null, { })
   }
 }
 
@@ -155,6 +167,6 @@ fun LoadingPreview() {
 @Composable
 fun ErrorPreview() {
   HomeMonitorTheme {
-    WeatherWidgetView(null, Exception("This is an error"))
+    WeatherWidgetView(null, Exception("This is an error"), { })
   }
 }
