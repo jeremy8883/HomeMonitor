@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("kotlin-kapt")
 }
 
 android {
@@ -66,11 +65,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3")
     // Fetch api
     implementation("com.android.volley:volley:1.1.1")
-    implementation("androidx.room:room-runtime:2.3.0")
-    annotationProcessor("androidx.room:room-compiler:2.3.0")
-    kapt("androidx.room:room-compiler:2.3.0") // To use Kotlin annotation processing tool (kapt)
-//    ksp("androidx.room:room-compiler:2.3.0") // To use Kotlin Symbolic Processing (KSP)
-    implementation("androidx.room:room-ktx:2.3.0") // optional - Kotlin Extensions and Coroutines support for Room
+    // Date library
+    implementation("joda-time:joda-time:2.10.10")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation("androidx.activity:activity-compose:1.3.0-alpha06")
     implementation("com.google.code.gson:gson:2.8.6")
