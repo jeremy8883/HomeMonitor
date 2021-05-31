@@ -10,44 +10,44 @@ private fun createTables(db: SQLiteDatabase) {
       "name TEXT NOT NULL," +
       "type TEXT NOT NULL," +
       "seq INTEGER NOT NULL);")
-  db.execSQL("CREATE TABLE Food (" +
+  db.execSQL("CREATE TABLE Activity (" +
       "id TEXT PRIMARY KEY," +
       "name TEXT NOT NULL," +
       "shortName TEXT NOT NULL," +
       "seq INTEGER NOT NULL);")
-  db.execSQL("CREATE TABLE Meal (" +
+  db.execSQL("CREATE TABLE Period (" +
       "id TEXT PRIMARY KEY," +
       "name TEXT NOT NULL," +
       "timeOfDay DATE NOT NULL);")
-  db.execSQL("CREATE TABLE PetMeal (" +
+  db.execSQL("CREATE TABLE SubjectPeriod (" +
       "id TEXT PRIMARY KEY," +
-      "animalId TEXT NOT NULL," +
-      "foodId TEXT NOT NULL," +
-      "mealId TEXT NOT NULL," +
-      "FOREIGN KEY (animalId) REFERENCES Animal(id)," +
-      "FOREIGN KEY (foodId) REFERENCES Food(id)," +
-      "FOREIGN KEY (mealId) REFERENCES Meal(id));")
+      "subjectId TEXT NOT NULL," +
+      "activityId TEXT NOT NULL," +
+      "periodId TEXT NOT NULL," +
+      "FOREIGN KEY (subjectId) REFERENCES Animal(id)," +
+      "FOREIGN KEY (activityId) REFERENCES Activity(id)," +
+      "FOREIGN KEY (periodId) REFERENCES Period(id));")
   db.execSQL("CREATE TABLE Log (" +
       "id TEXT PRIMARY KEY," +
-      "petMealId TEXT NOT NULL," +
+      "petPeriodId TEXT NOT NULL," +
       "time DATE NOT NULL," +
-      "FOREIGN KEY (petMealId) REFERENCES PetMeal(id));")
+      "FOREIGN KEY (petPeriodId) REFERENCES SubjectPeriod(id));")
 }
 
 private fun dropTables(db: SQLiteDatabase) {
-  db.execSQL("DROP TABLE IF EXISTS PetMeal")
-  db.execSQL("DROP TABLE IF EXISTS Food")
-  db.execSQL("DROP TABLE IF EXISTS Meal")
+  db.execSQL("DROP TABLE IF EXISTS SubjectPeriod")
+  db.execSQL("DROP TABLE IF EXISTS Activity")
+  db.execSQL("DROP TABLE IF EXISTS Period")
   db.execSQL("DROP TABLE IF EXISTS Animal")
   db.execSQL("DROP TABLE IF EXISTS Log")
 }
 
 private fun insertSeedData(db: SQLiteDatabase) {
   // Personal entries. In future, we could make this customizable in the UI.
-  animals.forEach { insertAnimal(db, it) }
-  foods.forEach { insertFood(db, it) }
-  meals.forEach { insertMeal(db, it) }
-  petMeals.forEach { insertPetMeal(db, it) }
+  subjects.forEach { insertSubject(db, it) }
+  activities.forEach { insertActivity(db, it) }
+  periods.forEach { insertPeriod(db, it) }
+  petPeriods.forEach { insertSubjectPeriod(db, it) }
 }
 
 class PetLogDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -72,7 +72,7 @@ class PetLogDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
   }
 
   companion object {
-    const val DATABASE_VERSION = 4
+    const val DATABASE_VERSION = 6
     const val DATABASE_NAME = "PetLog"
   }
 }

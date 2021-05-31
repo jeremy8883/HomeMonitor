@@ -8,13 +8,13 @@ import org.joda.time.LocalTime
 // These functions are obviously quite verbose and repetitive. I did try using Room, but was plagued
 // with errors, so I decided to keep everything simple. I'll give Room another go some other time.
 
-fun getAllAnimals(db: SQLiteDatabase): List<Animal> {
-  val cursor = db.rawQuery("SELECT * from Animal", arrayOf())
+fun getAllSubjects(db: SQLiteDatabase): List<Subject> {
+  val cursor = db.rawQuery("SELECT * from Subject", arrayOf())
 
-  val animals = mutableListOf<Animal>()
+  val subjects = mutableListOf<Subject>()
   with(cursor) {
     while (moveToNext()) {
-      animals.add(Animal(
+      subjects.add(Subject(
         id = getString(getColumnIndexOrThrow("id")),
         name = getString(getColumnIndexOrThrow("name")),
         type = getString(getColumnIndexOrThrow("type")),
@@ -22,26 +22,26 @@ fun getAllAnimals(db: SQLiteDatabase): List<Animal> {
       ))
     }
   }
-  return animals
+  return subjects
 }
 
-fun insertAnimal(db: SQLiteDatabase, animal: Animal) {
+fun insertSubject(db: SQLiteDatabase, subject: Subject) {
   val values = ContentValues().apply {
-    put("id", animal.id)
-    put("name", animal.name)
-    put("type", animal.type)
-    put("seq", animal.seq)
+    put("id", subject.id)
+    put("name", subject.name)
+    put("type", subject.type)
+    put("seq", subject.seq)
   }
-  db.insert("Animal", null, values)
+  db.insert("Subject", null, values)
 }
 
-fun getAllFoods(db: SQLiteDatabase): List<Food> {
-  val cursor = db.rawQuery("SELECT * from Food ORDER BY seq", arrayOf())
+fun getAllActivities(db: SQLiteDatabase): List<Activity> {
+  val cursor = db.rawQuery("SELECT * from Activity ORDER BY seq", arrayOf())
 
-  val foods = mutableListOf<Food>()
+  val activities = mutableListOf<Activity>()
   with(cursor) {
     while (moveToNext()) {
-      foods.add(Food(
+      activities.add(Activity(
         id = getString(getColumnIndexOrThrow("id")),
         name = getString(getColumnIndexOrThrow("name")),
         shortName = getString(getColumnIndexOrThrow("shortName")),
@@ -49,69 +49,69 @@ fun getAllFoods(db: SQLiteDatabase): List<Food> {
       ))
     }
   }
-  return foods
+  return activities
 }
 
-fun insertFood(db: SQLiteDatabase, food: Food) {
+fun insertActivity(db: SQLiteDatabase, activity: Activity) {
   val values = ContentValues().apply {
-    put("id", food.id)
-    put("name", food.name)
-    put("shortName", food.shortName)
-    put("seq", food.seq)
+    put("id", activity.id)
+    put("name", activity.name)
+    put("shortName", activity.shortName)
+    put("seq", activity.seq)
   }
-  db.insert("Food", null, values)
+  db.insert("Activity", null, values)
 }
 
-fun getAllMeals(db: SQLiteDatabase): List<Meal> {
-  val cursor = db.rawQuery("SELECT * from Meal ORDER BY timeOfDay", arrayOf())
+fun getAllPeriods(db: SQLiteDatabase): List<Period> {
+  val cursor = db.rawQuery("SELECT * from Period ORDER BY timeOfDay", arrayOf())
 
-  val meals = mutableListOf<Meal>()
+  val periods = mutableListOf<Period>()
   with(cursor) {
     while (moveToNext()) {
-      meals.add(Meal(
+      periods.add(Period(
         id = getString(getColumnIndexOrThrow("id")),
         name = getString(getColumnIndexOrThrow("name")),
         timeOfDay = LocalTime(getString(getColumnIndexOrThrow("timeOfDay"))),
       ))
     }
   }
-  return meals
+  return periods
 }
 
-fun insertMeal(db: SQLiteDatabase, meal: Meal) {
+fun insertPeriod(db: SQLiteDatabase, period: Period) {
   val values = ContentValues().apply {
-    put("id", meal.id)
-    put("name", meal.name)
-    put("timeOfDay", meal.timeOfDay.toString())
+    put("id", period.id)
+    put("name", period.name)
+    put("timeOfDay", period.timeOfDay.toString())
   }
-  db.insert("Meal", null, values)
+  db.insert("Period", null, values)
 }
 
-fun getAllPetMeals(db: SQLiteDatabase): List<PetMeal> {
-  val cursor = db.rawQuery("SELECT * from PetMeal", arrayOf())
+fun getAllSubjectPeriods(db: SQLiteDatabase): List<SubjectPeriod> {
+  val cursor = db.rawQuery("SELECT * from SubjectPeriod", arrayOf())
 
-  val petMeals = mutableListOf<PetMeal>()
+  val petPeriods = mutableListOf<SubjectPeriod>()
   with(cursor) {
     while (moveToNext()) {
-      petMeals.add(PetMeal(
+      petPeriods.add(SubjectPeriod(
         id = getString(getColumnIndexOrThrow("id")),
-        animalId = getString(getColumnIndexOrThrow("animalId")),
-        foodId = getString(getColumnIndexOrThrow("foodId")),
-        mealId = getString(getColumnIndexOrThrow("mealId")),
+        subjectId = getString(getColumnIndexOrThrow("subjectId")),
+        activityId = getString(getColumnIndexOrThrow("activityId")),
+        periodId = getString(getColumnIndexOrThrow("periodId")),
       ))
     }
   }
-  return petMeals
+  return petPeriods
 }
 
-fun insertPetMeal(db: SQLiteDatabase, petMeal: PetMeal) {
+fun insertSubjectPeriod(db: SQLiteDatabase, petPeriod: SubjectPeriod) {
   val values = ContentValues().apply {
-    put("id", petMeal.id)
-    put("animalId", petMeal.animalId)
-    put("foodId", petMeal.foodId)
-    put("mealId", petMeal.mealId)
+    put("id", petPeriod.id)
+    put("subjectId", petPeriod.subjectId)
+    put("activityId", petPeriod.activityId)
+    put("periodId", petPeriod.periodId)
   }
-  db.insert("PetMeal", null, values)
+  db.insert("SubjectPeriod", null, values)
 }
 
 fun getTodaysLogs(db: SQLiteDatabase, now: DateTime): List<Log> {
@@ -127,7 +127,7 @@ fun getTodaysLogs(db: SQLiteDatabase, now: DateTime): List<Log> {
     while (moveToNext()) {
       logs.add(Log(
         id = getString(getColumnIndexOrThrow("id")),
-        petMealId = getString(getColumnIndexOrThrow("petMealId")),
+        petPeriodId = getString(getColumnIndexOrThrow("petPeriodId")),
         time = DateTime(getString(getColumnIndexOrThrow("timeOfDay"))),
       ))
     }
@@ -138,7 +138,7 @@ fun getTodaysLogs(db: SQLiteDatabase, now: DateTime): List<Log> {
 fun insertLog(db: SQLiteDatabase, log: Log) {
   val values = ContentValues().apply {
     put("id", log.id)
-    put("petMealId", log.petMealId)
+    put("petPeriodId", log.petPeriodId)
     put("time", log.time.toString())
   }
   db.insert("Log", null, values)
