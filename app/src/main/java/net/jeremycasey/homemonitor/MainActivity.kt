@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
         // A surface container using the 'background' color from the theme
         Surface(color = MaterialTheme.colors.background) {
           Row (modifier = Modifier.padding(20.dp)) {
-//            WeatherWidget(weatherWidgetViewModel)
+            WeatherWidget(weatherWidgetViewModel)
             PetLogWidget(petLogViewModel)
           }
         }
