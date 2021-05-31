@@ -10,7 +10,7 @@ data class Subject(
   val seq: Int,
 )
 
-data class SubjectPeriod(
+data class ActivityPeriod(
   val id: String,
   val subjectId: String,
   val activityId: String,
@@ -32,6 +32,6 @@ data class Period(
 
 data class Log(
   val id: String,
-  val petPeriodId: String,
-  val time: DateTime,
+  val activityPeriodId: String,
+  val dateTime: DateTime,
 )

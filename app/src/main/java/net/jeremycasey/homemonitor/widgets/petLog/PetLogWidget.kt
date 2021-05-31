@@ -21,9 +21,11 @@ import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.widgets.petLog.db.*
 import net.jeremycasey.homemonitor.widgets.shared.LoadingPanel
 import net.jeremycasey.homemonitor.widgets.shared.WidgetCard
+import org.joda.time.DateTime
+import java.util.*
 
-val mockSubjectPeriods = petPeriods
-val mockAnimals = subjects
+val mockActivityPeriods = petPeriods
+val mockSubjects = subjects
 val mockPeriods = periods
 val mockActivities = activities
 
@@ -51,11 +53,11 @@ class PetLogWidgetViewModel(context: Context) : ViewModel() {
   private val _activities = MutableLiveData<List<Activity>?>(null)
   val activities: LiveData<List<Activity>?> = _activities
 
-  private val _petPeriods = MutableLiveData<List<SubjectPeriod>?>(null)
-  val petPeriods: LiveData<List<SubjectPeriod>?> = _petPeriods
+  private val _petPeriods = MutableLiveData<List<ActivityPeriod>?>(null)
+  val petPeriods: LiveData<List<ActivityPeriod>?> = _petPeriods
 
-//  private val _currentPetLog = MutableLiveData<CurrentPetLog?>(null)
-//  val currentPetLog: LiveData<CurrentPetLog?> = _currentPetLog
+  private val _logs = MutableLiveData<MutableList<Log>?>(null)
+  val logs: LiveData<ArrayList<Log>?> = _logs as LiveData<ArrayList<Log>?>
 
   private val _context = context
 
@@ -69,7 +71,37 @@ class PetLogWidgetViewModel(context: Context) : ViewModel() {
     _subjects.value = getAllSubjects(db)
     _periods.value = getAllPeriods(db)
     _activities.value = getAllActivities(db)
-    _petPeriods.value = getAllSubjectPeriods(db)
+    _petPeriods.value = getAllActivityPeriods(db)
+    _logs.value = getTodaysLogs(db, DateTime.now())
+    // TODO error handling
+  }
+
+  fun onLogActivity(activityPeriodId: String) {
+    if (_dbHelper == null) {
+      _dbHelper = PetLogDbHelper(_context)
+    }
+    val db = _dbHelper!!.writableDatabase
+    val log = Log(
+      id = UUID.randomUUID().toString(),
+      activityPeriodId = activityPeriodId,
+      dateTime = DateTime.now()
+    )
+    insertLog(db, log)
+
+    _logs.value = _logs.value?.plus(log) as MutableList<Log>?
+
+    // TODO error handling
+  }
+
+  fun onRemoveLog(logId: String) {
+    if (_dbHelper == null) {
+      _dbHelper = PetLogDbHelper(_context)
+    }
+    val db = _dbHelper!!.writableDatabase
+    removeLog(db, logId)
+
+    _logs.value = _logs.value?.filter { l -> l.id != logId } as MutableList<Log>?
+
     // TODO error handling
   }
 }
@@ -80,18 +112,29 @@ fun PetLogWidget(viewModel: PetLogWidgetViewModel) {
   val activities by viewModel.activities.observeAsState()
   val petPeriods by viewModel.petPeriods.observeAsState()
   val periods by viewModel.periods.observeAsState()
+  val logs by viewModel.logs.observeAsState()
 
   LaunchedEffect("") {
     viewModel.onPetDataRequired()
   }
 
-  PetLogWidgetView(subjects, periods, activities, petPeriods)
+  PetLogWidgetView(
+    subjects, periods, activities, petPeriods, logs,
+    { apId -> viewModel.onLogActivity(apId) },
+    { logId -> viewModel.onRemoveLog(logId) }
+  )
 }
 
 @Composable
-fun PetLogWidgetView(subjects: List<Subject>?, periods: List<Period>?,
-                     activities: List<Activity>?, petPeriods: List<SubjectPeriod>?) {
-  if (petPeriods == null || subjects == null || periods == null || activities == null) {
+fun PetLogWidgetView(
+  subjects: List<Subject>?, periods: List<Period>?,
+  activities: List<Activity>?, activityPeriods: List<ActivityPeriod>?,
+  logs: List<Log>?,
+  onLogActivity: (activityPeriodId: String) -> Any,
+  onRemoveLog: (activityPeriodId: String) -> Any
+) {
+  if (activityPeriods == null || subjects == null || periods == null ||
+    activities == null || logs == null) {
     WidgetCard {
       LoadingPanel()
     }
@@ -114,12 +157,20 @@ fun PetLogWidgetView(subjects: List<Subject>?, periods: List<Period>?,
       Row {
         Text(subject.name, modifier = Modifier.width(80.dp))
         periods.map { period ->
-          val pms = petPeriods.filter { pm -> pm.periodId == period.id && pm.subjectId == subject.id }
+          val aps = activityPeriods.filter { pm -> pm.periodId == period.id && pm.subjectId == subject.id }
           Row (modifier = Modifier.width(150.dp)) {
-            pms.map { pm ->
-              val activity = findActivity(activities, pm.activityId)
+            aps.map { ap ->
+              val activity = findActivity(activities, ap.activityId)
+              val log = findLogByActivityPeriod(logs, ap.id)
               Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(5.dp, 0.dp)) {
-                Checkbox(checked = false, onCheckedChange = { }, modifier = Modifier.padding(0.dp, 0.dp, 5.dp, 0.dp))
+                Checkbox(
+                  checked = log != null,
+                  onCheckedChange = {
+                    if (log == null) onLogActivity(ap.id)
+                    else onRemoveLog(log.id)
+                  },
+                  modifier = Modifier.padding(0.dp, 0.dp, 5.dp, 0.dp)
+                )
                 Text("${activity?.shortName}")
               }
             }
@@ -135,11 +186,16 @@ private fun findActivity(
   activityId: String
 ) = activities.find { f -> f.id == activityId }
 
+private fun findLogByActivityPeriod(
+  logs: List<Log>,
+  activityPeriodId: String
+) = logs.find { l -> l.activityPeriodId == activityPeriodId }
+
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
   HomeMonitorTheme {
-    PetLogWidgetView(mockAnimals, mockPeriods, mockActivities, mockSubjectPeriods)
+    PetLogWidgetView(mockSubjects, mockPeriods, mockActivities, mockActivityPeriods, listOf(), { }, { })
   }
 }
 
@@ -147,7 +203,7 @@ fun DefaultPreview() {
 @Composable
 fun LoadingPreview() {
   HomeMonitorTheme {
-    PetLogWidgetView(null, null, null, null)
+    PetLogWidgetView(null, null, null, null, null, { }, { })
   }
 }
 

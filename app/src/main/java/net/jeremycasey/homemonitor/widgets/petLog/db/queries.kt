@@ -87,13 +87,13 @@ fun insertPeriod(db: SQLiteDatabase, period: Period) {
   db.insert("Period", null, values)
 }
 
-fun getAllSubjectPeriods(db: SQLiteDatabase): List<SubjectPeriod> {
-  val cursor = db.rawQuery("SELECT * from SubjectPeriod", arrayOf())
+fun getAllActivityPeriods(db: SQLiteDatabase): List<ActivityPeriod> {
+  val cursor = db.rawQuery("SELECT * from ActivityPeriod", arrayOf())
 
-  val petPeriods = mutableListOf<SubjectPeriod>()
+  val petPeriods = mutableListOf<ActivityPeriod>()
   with(cursor) {
     while (moveToNext()) {
-      petPeriods.add(SubjectPeriod(
+      petPeriods.add(ActivityPeriod(
         id = getString(getColumnIndexOrThrow("id")),
         subjectId = getString(getColumnIndexOrThrow("subjectId")),
         activityId = getString(getColumnIndexOrThrow("activityId")),
@@ -104,19 +104,19 @@ fun getAllSubjectPeriods(db: SQLiteDatabase): List<SubjectPeriod> {
   return petPeriods
 }
 
-fun insertSubjectPeriod(db: SQLiteDatabase, petPeriod: SubjectPeriod) {
+fun insertActivityPeriod(db: SQLiteDatabase, petPeriod: ActivityPeriod) {
   val values = ContentValues().apply {
     put("id", petPeriod.id)
     put("subjectId", petPeriod.subjectId)
     put("activityId", petPeriod.activityId)
     put("periodId", petPeriod.periodId)
   }
-  db.insert("SubjectPeriod", null, values)
+  db.insert("ActivityPeriod", null, values)
 }
 
-fun getTodaysLogs(db: SQLiteDatabase, now: DateTime): List<Log> {
+fun getTodaysLogs(db: SQLiteDatabase, now: DateTime): MutableList<Log> {
   val cursor = db.rawQuery(
-    "SELECT * from Log where date >= ? AND date < ?",
+    "SELECT * from Log where dateTime >= ? AND dateTime < ?",
     arrayOf(
       now.withTimeAtStartOfDay().toString(),
       now.plusDays(1).withTimeAtStartOfDay().toString()
@@ -127,8 +127,8 @@ fun getTodaysLogs(db: SQLiteDatabase, now: DateTime): List<Log> {
     while (moveToNext()) {
       logs.add(Log(
         id = getString(getColumnIndexOrThrow("id")),
-        petPeriodId = getString(getColumnIndexOrThrow("petPeriodId")),
-        time = DateTime(getString(getColumnIndexOrThrow("timeOfDay"))),
+        activityPeriodId = getString(getColumnIndexOrThrow("activityPeriodId")),
+        dateTime = DateTime(getString(getColumnIndexOrThrow("dateTime"))),
       ))
     }
   }
@@ -138,8 +138,14 @@ fun getTodaysLogs(db: SQLiteDatabase, now: DateTime): List<Log> {
 fun insertLog(db: SQLiteDatabase, log: Log) {
   val values = ContentValues().apply {
     put("id", log.id)
-    put("petPeriodId", log.petPeriodId)
-    put("time", log.time.toString())
+    put("activityPeriodId", log.activityPeriodId)
+    put("dateTime", log.dateTime.toString())
   }
   db.insert("Log", null, values)
+}
+
+fun removeLog(db: SQLiteDatabase, id: String) {
+  db.delete("Log", "id = ?", arrayOf(
+    id
+  ))
 }
