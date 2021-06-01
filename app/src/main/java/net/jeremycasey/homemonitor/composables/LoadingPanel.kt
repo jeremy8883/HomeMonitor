@@ -1,4 +1,4 @@
-package net.jeremycasey.homemonitor.widgets.shared
+package net.jeremycasey.homemonitor.composables
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable

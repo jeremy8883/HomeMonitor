@@ -19,8 +19,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.widgets.petLog.db.*
-import net.jeremycasey.homemonitor.widgets.shared.LoadingPanel
-import net.jeremycasey.homemonitor.widgets.shared.WidgetCard
+import net.jeremycasey.homemonitor.composables.LoadingPanel
+import net.jeremycasey.homemonitor.composables.WidgetCard
 import org.joda.time.DateTime
 import java.util.*
 

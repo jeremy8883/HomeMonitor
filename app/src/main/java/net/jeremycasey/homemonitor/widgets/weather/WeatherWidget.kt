@@ -25,9 +25,9 @@ import androidx.lifecycle.ViewModelProvider
 import net.jeremycasey.homemonitor.api.openWeather.*
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.utils.round
-import net.jeremycasey.homemonitor.widgets.shared.ErrorPanel
-import net.jeremycasey.homemonitor.widgets.shared.LoadingPanel
-import net.jeremycasey.homemonitor.widgets.shared.WidgetCard
+import net.jeremycasey.homemonitor.composables.ErrorPanel
+import net.jeremycasey.homemonitor.composables.LoadingPanel
+import net.jeremycasey.homemonitor.composables.WidgetCard
 
 val mockCurrentWeather = CurrentWeather(
   coord = Coord( lon = 144.9633, lat = -37.814 ),

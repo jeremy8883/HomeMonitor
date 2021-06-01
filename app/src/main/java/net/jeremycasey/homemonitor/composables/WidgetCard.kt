@@ -1,4 +1,4 @@
-package net.jeremycasey.homemonitor.widgets.shared
+package net.jeremycasey.homemonitor.composables
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
