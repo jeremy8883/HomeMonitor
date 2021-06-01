@@ -14,6 +14,9 @@ import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.widgets.petLog.PetLogWidget
 import net.jeremycasey.homemonitor.widgets.petLog.PetLogWidgetViewModel
 import net.jeremycasey.homemonitor.widgets.petLog.PetLogWidgetViewModelFactory
+import net.jeremycasey.homemonitor.widgets.ptv.PtvWidget
+import net.jeremycasey.homemonitor.widgets.ptv.PtvWidgetViewModel
+import net.jeremycasey.homemonitor.widgets.ptv.PtvWidgetViewModelFactory
 import net.jeremycasey.homemonitor.widgets.weather.WeatherWidget
 import net.jeremycasey.homemonitor.widgets.weather.WeatherWidgetViewModel
 import net.jeremycasey.homemonitor.widgets.weather.WeatherWidgetViewModelFactory
@@ -28,14 +31,18 @@ class MainActivity : ComponentActivity() {
     val petLogViewModel by viewModels<PetLogWidgetViewModel>() {
       PetLogWidgetViewModelFactory(this)
     }
+    val ptvViewModel by viewModels<PtvWidgetViewModel>() {
+      PtvWidgetViewModelFactory(this)
+    }
 
     setContent {
       HomeMonitorTheme {
         // A surface container using the 'background' color from the theme
         Surface(color = MaterialTheme.colors.background) {
           Row (modifier = Modifier.padding(20.dp)) {
-            WeatherWidget(weatherWidgetViewModel)
-            PetLogWidget(petLogViewModel)
+//            WeatherWidget(weatherWidgetViewModel)
+//            PetLogWidget(petLogViewModel)
+            PtvWidget(ptvViewModel)
           }
         }
       }
