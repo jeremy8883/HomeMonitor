@@ -1,4 +1,4 @@
-package net.jeremycasey.homemonitor.api.openWeather
+package net.jeremycasey.homemonitor.widgets.weather.api
 
 import GsonRequest
 import android.content.Context
