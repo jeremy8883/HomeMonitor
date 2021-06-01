@@ -1,63 +1,18 @@
 package net.jeremycasey.homemonitor.widgets.ptv.api
 
 import GsonRequest
+import VolleySingleton
 import android.content.Context
 import com.android.volley.Response
 import net.jeremycasey.homemonitor.private.ptvApiKey
 import net.jeremycasey.homemonitor.private.ptvDevId
-import net.jeremycasey.homemonitor.widgets.ptv.*
-import java.security.Key
-import javax.crypto.Mac
-import javax.crypto.spec.SecretKeySpec
-
-private fun appendQueryParam(url: String, key: String, value: String): String {
-  var ret = url
-  if (url.contains('?')) {
-    ret += "&"
-  } else {
-    ret += "?"
-  }
-  return "$ret$key=$value"
-}
-
-//fun _buildTtapiUrl(
-//  path: String,
-//  developerId: String,
-//  privateKey: String
-//): String {
-////  val uriWithDeveloperID = Uri.parse("http://timetableapi.ptv.vic.gov.au$path")
-////    .buildUpon()
-////    .appendQueryParameter("devid", developerId)
-////    .build()
-////    .toString()
-//  val uriWithDeveloperID = appendQueryParam("http://timetableapi.ptv.vic.gov.au$path", "devid", developerId)
-//
-//  val keyBytes = privateKey.toByteArray()
-//  val uriBytes = uriWithDeveloperID.toByteArray()
-//  val signingKey: Key = SecretKeySpec(keyBytes, "HmacSHA1")
-//  val mac: Mac = Mac.getInstance("HmacSHA1")
-//  mac.init(signingKey)
-//  val signatureBytes: ByteArray = mac.doFinal(uriBytes)
-//  val signature = StringBuffer(signatureBytes.size * 2)
-//  for (signatureByte in signatureBytes) {
-//    val intVal: Int = signatureByte.toInt() and 0xff
-//    if (intVal < 0x10) {
-//      signature.append("0")
-//    }
-//    signature.append(Integer.toHexString(intVal))
-//  }
-//
-//  return appendQueryParam(uriWithDeveloperID, "signature", signature.toString().toUpperCase())
-////  return Uri.parse(uriWithDeveloperID)
-////    .buildUpon()
-////    .appendQueryParameter("signature", signature.toString().toUpperCase())
-////    .build()
-//}
+import net.jeremycasey.homemonitor.widgets.ptv.Departure
+import net.jeremycasey.homemonitor.widgets.ptv.Route
+import net.jeremycasey.homemonitor.widgets.ptv.RouteType
+import net.jeremycasey.homemonitor.widgets.ptv.Stop
 
 fun _buildTtapiUrl(path: String, developerId: String, privateKey: String): String {
-  val ret = TtApiUrl.buildTTAPIURL("https://timetableapi.ptv.vic.gov.au", privateKey, path, developerId)
-  println(ret)
-  return ret
+  return TtApiUrl.buildTTAPIURL("https://timetableapi.ptv.vic.gov.au", privateKey, path, developerId)
 }
 
 private fun getPtvUrl(path: String): String {
@@ -99,24 +54,6 @@ fun fetchRoute(context: Context, routeId: Int, listener: Response.Listener<Route
   val request = GsonRequest<RouteResponse>(
     getPtvUrl("/v3/routes/$routeId"),
     RouteResponse::class.java,
-    null,
-    listener,
-    errorListener
-  )
-  VolleySingleton.getInstance(context).addToRequestQueue(request)
-}
-
-data class DirectionResponse(
-  val directions: List<Direction>,
-  val status: Status
-)
-
-// GET /v3/directions/{direction_id}/route_type/{route_type}
-// http://timetableapi.ptv.vic.gov.au/swagger/ui/index#!/Directions/Directions_ForDirectionAndType
-fun fetchDirection(context: Context, directionId: Int, routeType: RouteType, listener: Response.Listener<DirectionResponse>, errorListener: Response.ErrorListener) {
-  val request = GsonRequest<DirectionResponse>(
-    getPtvUrl("/v3/directions/$directionId/route_type/${routeType.value}"),
-    DirectionResponse::class.java,
     null,
     listener,
     errorListener
