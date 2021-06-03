@@ -39,3 +39,7 @@ val ptvWatchedStops = listOf(
   // ...
 )
 ```
+
+You'll need the Rapid Ring app installed.
+
+Once you've installed this HomeMonitor app, go to the system Settings -> Apps and Notifications -> Special app access -> Notification access, and ensure that the Home Monitor app is checked.

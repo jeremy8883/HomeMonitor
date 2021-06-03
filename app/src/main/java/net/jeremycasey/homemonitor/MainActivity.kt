@@ -11,6 +11,9 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
+import net.jeremycasey.homemonitor.widgets.doorbell.DoorbellWidget
+import net.jeremycasey.homemonitor.widgets.doorbell.DoorbellWidgetViewModel
+import net.jeremycasey.homemonitor.widgets.doorbell.DoorbellWidgetViewModelFactory
 import net.jeremycasey.homemonitor.widgets.petLog.PetLogWidget
 import net.jeremycasey.homemonitor.widgets.petLog.PetLogWidgetViewModel
 import net.jeremycasey.homemonitor.widgets.petLog.PetLogWidgetViewModelFactory
@@ -34,6 +37,9 @@ class MainActivity : ComponentActivity() {
     val ptvViewModel by viewModels<PtvWidgetViewModel>() {
       PtvWidgetViewModelFactory(this)
     }
+    val doorbellViewModel by viewModels<DoorbellWidgetViewModel>() {
+      DoorbellWidgetViewModelFactory(this)
+    }
 
     setContent {
       HomeMonitorTheme {
@@ -43,6 +49,7 @@ class MainActivity : ComponentActivity() {
             WeatherWidget(weatherWidgetViewModel)
             PetLogWidget(petLogViewModel)
             PtvWidget(ptvViewModel)
+            DoorbellWidget(doorbellViewModel)
           }
         }
       }
