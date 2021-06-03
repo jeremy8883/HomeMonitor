@@ -4,7 +4,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import android.util.Log
+import org.joda.time.DateTime
 
 class DoorbellListenerService : NotificationListenerService() {
   fun keySetToString(keySet: Set<String>): String {
@@ -32,7 +32,13 @@ class DoorbellListenerService : NotificationListenerService() {
     i.putExtra("picture", picture as Bitmap)
     i.putExtra("title", title)
     i.putExtra("eventType", eventType)
+    i.putExtra("contentIntent", sbn.notification.contentIntent)
+    i.putExtra("dateTime", DateTime.now().toString())
     sendBroadcast(i)
+
+    if (eventType === "ring") {
+      sbn.notification.contentIntent.send()
+    }
 
 //    println(
 //      "ID :" + sbn.id + "\t" + sbn.notification.tickerText + "\t"
