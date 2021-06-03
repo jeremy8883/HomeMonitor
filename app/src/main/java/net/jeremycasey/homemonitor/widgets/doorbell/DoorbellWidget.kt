@@ -7,31 +7,28 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import net.jeremycasey.homemonitor.R
 import net.jeremycasey.homemonitor.composables.WidgetCard
+import net.jeremycasey.homemonitor.composables.WithCurrentTime
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
+import net.jeremycasey.homemonitor.utils.toRelativeDateString
 import org.joda.time.DateTime
-import androidx.core.content.ContextCompat.startActivity
-
-
-
-
 
 class DoorbellWidgetViewModelFactory(context: Context) :
   ViewModelProvider.Factory {
@@ -113,16 +110,19 @@ fun DoorbellWidget(viewModel: DoorbellWidgetViewModel) {
     }
   }
 
-  DoorbellWidgetView(latestEvent, { viewModel.onCardTouch() })
+  WithCurrentTime { now ->
+    DoorbellWidgetView(latestEvent, now, { viewModel.onCardTouch() })
+  }
 }
 
 @Composable
-fun DoorbellWidgetView(latestEvent: DoorbellEvent?, onCardTouch: () -> Unit) {
+fun DoorbellWidgetView(latestEvent: DoorbellEvent?, now: DateTime, onCardTouch: () -> Unit) {
   WidgetCard(onCardTouch) {
-    Text("Doorbell")
+    Text("Doorbell", style = MaterialTheme.typography.h4)
     if (latestEvent != null) {
       Column {
         Text(latestEvent.title)
+        Text(toRelativeDateString(latestEvent.dateTime, now), style = MaterialTheme.typography.subtitle1)
         Image(
           painter = BitmapPainter(latestEvent.picture.asImageBitmap()),
           contentDescription = null
@@ -141,8 +141,8 @@ fun DefaultPreview() {
         title = "There is motion at your Front Door",
         eventType = "motion",
         picture = BitmapFactory.decodeResource(LocalContext.current.getResources(), R.drawable.hello_world),
-        dateTime = DateTime.now(),
-      ), {}
+        dateTime = DateTime.now().minusMinutes(2),
+      ), DateTime.now(), {}
     )
   }
 }
@@ -151,6 +151,6 @@ fun DefaultPreview() {
 @Composable
 fun EmptyPreview() {
   HomeMonitorTheme {
-    DoorbellWidgetView(null, {})
+    DoorbellWidgetView(null, DateTime.now(), {})
   }
 }
