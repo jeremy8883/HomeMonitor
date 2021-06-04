@@ -12,9 +12,13 @@ import androidx.core.database.getStringOrNull
 import net.jeremycasey.homemonitor.widgets.calendar.CalendarEvent
 import org.joda.time.DateTime
 
-fun getAllEvents(context: Context): List<CalendarEvent> {
-  var events: List<CalendarEvent> = listOf()
+data class Calendar (
+  val accountName: String,
+  val displayName: String,
+)
 
+private fun getCalendarList(context: Context): List<Calendar> {
+  val calendars = mutableListOf<Calendar>()
   val calendarCursor: Cursor = context.getContentResolver()
     .query(
       Calendars.CONTENT_URI,
@@ -24,15 +28,26 @@ fun getAllEvents(context: Context): List<CalendarEvent> {
       null
     ) as Cursor
   while (calendarCursor.moveToNext()) {
-    val accountName = calendarCursor.getString(0)
-    val displayName = calendarCursor.getString(1)
-    events = events + getEventsForCalendar(context, accountName, displayName)
+    calendars.add(Calendar(
+      accountName = calendarCursor.getString(0),
+      displayName = calendarCursor.getString(1),
+    ))
   }
   calendarCursor.close()
-  return events
+
+  // I'm not sure why, but some calendars were showing twice
+  return calendars.distinctBy { "${it.accountName}|||${it.displayName}" }
 }
 
-private fun getEventsForCalendar(context: Context, accountName: String, calendarDisplayName: String): List<CalendarEvent> {
+fun getAllEvents(context: Context): List<CalendarEvent> {
+  val calendars = getCalendarList(context)
+
+  return calendars.flatMap {
+    getEventsForCalendar(context, it)
+  }
+}
+
+private fun getEventsForCalendar(context: Context, calendar: Calendar): List<CalendarEvent> {
   val startMillis: Long = DateTime.now().millis
   val endMillis: Long = DateTime.now().plusDays(2).withTimeAtStartOfDay().millis
 
@@ -52,7 +67,7 @@ private fun getEventsForCalendar(context: Context, accountName: String, calendar
     ),
     // I couldn't find any Calendar ID!? As long as we don't have two calendars of the same, name, this is fine.
     "(${Calendars.ACCOUNT_NAME} = ? AND ${Calendars.CALENDAR_DISPLAY_NAME} = ?)",
-    arrayOf(accountName, calendarDisplayName),
+    arrayOf(calendar.accountName, calendar.displayName),
     "${Instances.BEGIN} ASC"
   ) as Cursor
 
@@ -77,8 +92,8 @@ private fun getEventsForCalendar(context: Context, accountName: String, calendar
       title = cursor.getString(1),
       isAllDay = isAllDay,
       calendarColor = Color(cursor.getInt(3)),
-      accountName = accountName,
-      calendarName = calendarDisplayName,
+      accountName = calendar.accountName,
+      calendarName = calendar.displayName,
       startDateTime = startDateTime,
       endDateTime = endDateTime!!,
     ))
