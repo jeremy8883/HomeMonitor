@@ -47,6 +47,20 @@ fun getAllEvents(context: Context): List<CalendarEvent> {
   }
 }
 
+private fun getForcedEndDate(
+  endTimeString: String?,
+  isAllDay: Boolean,
+  startDateTime: DateTime
+): DateTime {
+  if (endTimeString != null) {
+    return DateTime(endTimeString.toLong())
+  } else if (isAllDay) {
+    return startDateTime.plusDays(1)
+  }
+  // Not sure if this is possible, but we'll account for it
+  return startDateTime.plusHours(1)
+}
+
 private fun getEventsForCalendar(context: Context, calendar: Calendar): List<CalendarEvent> {
   val startMillis: Long = DateTime.now().millis
   val endMillis: Long = DateTime.now().plusDays(2).withTimeAtStartOfDay().millis
@@ -77,15 +91,7 @@ private fun getEventsForCalendar(context: Context, calendar: Calendar): List<Cal
     val isAllDay = toBoolean(cursor.getInt(2))
     val startDateTime = DateTime(cursor.getString(4).toLong())
     val endTimeString = cursor.getStringOrNull(5)
-    var endDateTime: DateTime? = null
-    if (endTimeString != null) {
-      endDateTime = DateTime(endTimeString.toLong())
-    } else if (endDateTime == null && isAllDay) {
-      endDateTime = startDateTime.plusDays(1)
-    } else {
-      // Not sure if this is possible, but we'll account for it
-      endDateTime = startDateTime.plusHours(1)
-    }
+    val endDateTime = getForcedEndDate(endTimeString, isAllDay, startDateTime)
 
     events.add(CalendarEvent(
       id = cursor.getString(0),
@@ -95,7 +101,7 @@ private fun getEventsForCalendar(context: Context, calendar: Calendar): List<Cal
       accountName = calendar.accountName,
       calendarName = calendar.displayName,
       startDateTime = startDateTime,
-      endDateTime = endDateTime!!,
+      endDateTime = endDateTime,
     ))
   }
 
