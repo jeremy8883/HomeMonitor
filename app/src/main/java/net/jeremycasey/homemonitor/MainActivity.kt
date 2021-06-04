@@ -12,6 +12,9 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
+import net.jeremycasey.homemonitor.widgets.calendar.CalendarWidget
+import net.jeremycasey.homemonitor.widgets.calendar.CalendarWidgetViewModel
+import net.jeremycasey.homemonitor.widgets.calendar.CalendarWidgetViewModelFactory
 import net.jeremycasey.homemonitor.widgets.doorbell.DoorbellWidget
 import net.jeremycasey.homemonitor.widgets.doorbell.DoorbellWidgetViewModel
 import net.jeremycasey.homemonitor.widgets.doorbell.DoorbellWidgetViewModelFactory
@@ -41,6 +44,9 @@ class MainActivity : ComponentActivity() {
     val doorbellViewModel by viewModels<DoorbellWidgetViewModel>() {
       DoorbellWidgetViewModelFactory(this)
     }
+    val calendarViewModel by viewModels<CalendarWidgetViewModel>() {
+      CalendarWidgetViewModelFactory(this)
+    }
 
     setContent {
       HomeMonitorTheme {
@@ -51,6 +57,7 @@ class MainActivity : ComponentActivity() {
             PetLogWidget(petLogViewModel)
             PtvWidget(ptvViewModel)
             DoorbellWidget(doorbellViewModel)
+            CalendarWidget(calendarViewModel)
           }
         }
       }
