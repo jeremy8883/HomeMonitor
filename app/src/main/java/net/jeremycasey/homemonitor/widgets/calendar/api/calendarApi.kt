@@ -47,13 +47,13 @@ private fun getEventsForCalendar(context: Context, accountName: String, calendar
       Instances.TITLE,
       Instances.ALL_DAY,
       Instances.CALENDAR_COLOR,
-      Instances.DTSTART,
-      Instances.DTEND,
+      Instances.BEGIN,
+      Instances.END,
     ),
     // I couldn't find any Calendar ID!? As long as we don't have two calendars of the same, name, this is fine.
     "(${Calendars.ACCOUNT_NAME} = ? AND ${Calendars.CALENDAR_DISPLAY_NAME} = ?)",
     arrayOf(accountName, calendarDisplayName),
-    "${Instances.BEGIN} ASC, ${Instances.END} ASC"
+    "${Instances.BEGIN} ASC"
   ) as Cursor
 
   val events = mutableListOf<CalendarEvent>()
