@@ -8,6 +8,7 @@ import android.provider.CalendarContract.Calendars
 import android.content.ContentUris
 import android.content.Context
 import androidx.compose.ui.graphics.Color
+import androidx.core.database.getStringOrNull
 import net.jeremycasey.homemonitor.widgets.calendar.CalendarEvent
 import org.joda.time.DateTime
 
@@ -15,7 +16,13 @@ fun getAllEvents(context: Context): List<CalendarEvent> {
   var events: List<CalendarEvent> = listOf()
 
   val calendarCursor: Cursor = context.getContentResolver()
-    .query(Calendars.CONTENT_URI, arrayOf(Calendars.ACCOUNT_NAME, Calendars.CALENDAR_DISPLAY_NAME), null, null, null) as Cursor
+    .query(
+      Calendars.CONTENT_URI,
+      arrayOf(Calendars.ACCOUNT_NAME, Calendars.CALENDAR_DISPLAY_NAME),
+      null,
+      null,
+      null
+    ) as Cursor
   while (calendarCursor.moveToNext()) {
     val accountName = calendarCursor.getString(0)
     val displayName = calendarCursor.getString(1)
@@ -50,16 +57,30 @@ private fun getEventsForCalendar(context: Context, accountName: String, calendar
   ) as Cursor
 
   val events = mutableListOf<CalendarEvent>()
+
   while (cursor.moveToNext()) {
+    val isAllDay = toBoolean(cursor.getInt(2))
+    val startDateTime = DateTime(cursor.getString(4).toLong())
+    val endTimeString = cursor.getStringOrNull(5)
+    var endDateTime: DateTime? = null
+    if (endTimeString != null) {
+      endDateTime = DateTime(endTimeString.toLong())
+    } else if (endDateTime == null && isAllDay) {
+      endDateTime = startDateTime.plusDays(1)
+    } else {
+      // Not sure if this is possible, but we'll account for it
+      endDateTime = startDateTime.plusHours(1)
+    }
+
     events.add(CalendarEvent(
       id = cursor.getString(0),
       title = cursor.getString(1),
-      isAllDay = toBoolean(cursor.getInt(2)),
+      isAllDay = isAllDay,
       calendarColor = Color(cursor.getInt(3)),
       accountName = accountName,
       calendarName = calendarDisplayName,
-      startDateTime = DateTime(cursor.getString(4).toLong()),
-      endDateTime = DateTime(cursor.getString(5).toLong()),
+      startDateTime = startDateTime,
+      endDateTime = endDateTime!!,
     ))
   }
 
