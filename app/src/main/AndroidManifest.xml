@@ -13,11 +13,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HomeMonitor"
         >
+        <!-- Re: screenOrientation="landscape". I would like to not have this,
+        but there's a bug where the broadcast receiver keeps crashing on rotation.
+        But when I hide and refocus the app, there's no problem...also why can't
+        xml have comments inline with parameters!?!? -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
+            android:screenOrientation="landscape"
             android:theme="@style/Theme.HomeMonitor.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
