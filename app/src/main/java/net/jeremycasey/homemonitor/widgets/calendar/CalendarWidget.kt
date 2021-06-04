@@ -40,16 +40,6 @@ val mockTodaysEvents: List<CalendarEvent> = listOf(
     endDateTime=DateTime("2021-06-04T15:30:00.000+10:00"),
   ),
   CalendarEvent(
-    id="60",
-    calendarName="buckinghamtablet@gmail.com",
-    accountName="buckinghamtablet@gmail.com",
-    title="Event full day",
-    isAllDay=true,
-    calendarColor=Color.Blue,
-    startDateTime=DateTime("2021-06-05T10:00:00.000+10:00"),
-    endDateTime=DateTime("2021-06-06T10:00:00.000+10:00"),
-  ),
-  CalendarEvent(
     id="59",
     calendarName="buckinghamtablet@gmail.com",
     accountName="buckinghamtablet@gmail.com",
@@ -58,6 +48,16 @@ val mockTodaysEvents: List<CalendarEvent> = listOf(
     calendarColor=Color.Blue,
     startDateTime=DateTime("2021-06-05T12:00:00.000+10:00"),
     endDateTime=DateTime("2021-06-05T13:00:00.000+10:00"),
+  ),
+  CalendarEvent(
+    id="60",
+    calendarName="buckinghamtablet@gmail.com",
+    accountName="buckinghamtablet@gmail.com",
+    title="Event full day",
+    isAllDay=true,
+    calendarColor=Color.Blue,
+    startDateTime=DateTime("2021-06-05T10:00:00.000+10:00"),
+    endDateTime=DateTime("2021-06-06T10:00:00.000+10:00"),
   ),
 )
 
@@ -135,6 +135,12 @@ private fun groupEventsByDay(events: List<CalendarEvent>): List<GroupedEvent> {
     GroupedEvent(
       date = DateTime(it.key),
       events = it.value
+        .sortedBy { it.endDateTime.millis }
+        .sortedBy { if (it.isAllDay) {
+          it.startDateTime.withTimeAtStartOfDay().millis
+        } else {
+          it.startDateTime.millis
+        } }
     )
   }
 }
