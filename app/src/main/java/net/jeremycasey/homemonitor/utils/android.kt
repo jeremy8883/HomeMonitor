@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.view.Window
+import android.util.DisplayMetrics
+import androidx.activity.ComponentActivity
+
 
 fun openApp(context: Context, packageName: String) {
   val launchIntent: Intent? = context.getPackageManager()
@@ -24,4 +27,17 @@ fun hideSystemUi(window: Window) {
       // Hide the nav bar and status bar
       or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
       or View.SYSTEM_UI_FLAG_FULLSCREEN)
+}
+
+data class Size (
+  val width: Double,
+  val height: Double,
+)
+
+fun getScreenSize(ca: ComponentActivity): Size {
+  val displayMetrics = DisplayMetrics()
+  ca.windowManager.getDefaultDisplay().getMetrics(displayMetrics)
+  val height = displayMetrics.heightPixels
+  val width = displayMetrics.widthPixels
+  return Size(width.toDouble(), height.toDouble())
 }
