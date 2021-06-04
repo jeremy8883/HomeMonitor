@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,6 +22,8 @@ import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.widgets.petLog.db.*
 import net.jeremycasey.homemonitor.composables.LoadingPanel
 import net.jeremycasey.homemonitor.composables.WidgetCard
+import net.jeremycasey.homemonitor.composables.WithCurrentTime
+import net.jeremycasey.homemonitor.utils.hoursToMs
 import org.joda.time.DateTime
 import java.util.*
 
@@ -118,11 +121,13 @@ fun PetLogWidget(viewModel: PetLogWidgetViewModel) {
     viewModel.onPetDataRequired()
   }
 
-  PetLogWidgetView(
-    subjects, periods, activities, petPeriods, logs,
-    { apId -> viewModel.onLogActivity(apId) },
-    { logId -> viewModel.onRemoveLog(logId) }
-  )
+  WithCurrentTime(hoursToMs(1)) { now ->
+    PetLogWidgetView(
+      subjects, periods, activities, petPeriods, logs, now,
+      { apId -> viewModel.onLogActivity(apId) },
+      { logId -> viewModel.onRemoveLog(logId) }
+    )
+  }
 }
 
 @Composable
@@ -130,6 +135,7 @@ fun PetLogWidgetView(
   subjects: List<Subject>?, periods: List<Period>?,
   activities: List<Activity>?, activityPeriods: List<ActivityPeriod>?,
   logs: List<Log>?,
+  now: DateTime,
   onLogActivity: (activityPeriodId: String) -> Any,
   onRemoveLog: (activityPeriodId: String) -> Any
 ) {
@@ -141,6 +147,9 @@ fun PetLogWidgetView(
     return
   }
 
+  val todaysLogs = remember(logs, now) {
+    logs.filter { it.dateTime.withTimeAtStartOfDay().millis == now.withTimeAtStartOfDay().millis }
+  }
 
   WidgetCard {
     Row {
@@ -148,7 +157,9 @@ fun PetLogWidgetView(
       periods.map {period ->
         Text(
           period.name,
-          modifier = Modifier.width(150.dp).padding(0.dp, 0.dp, 0.dp, 5.dp),
+          modifier = Modifier
+            .width(150.dp)
+            .padding(0.dp, 0.dp, 0.dp, 5.dp),
           style = MaterialTheme.typography.subtitle2
         )
       }
@@ -161,7 +172,7 @@ fun PetLogWidgetView(
           Row (modifier = Modifier.width(150.dp)) {
             aps.map { ap ->
               val activity = findActivity(activities, ap.activityId)
-              val log = findLogByActivityPeriod(logs, ap.id)
+              val log = findLogByActivityPeriod(todaysLogs, ap.id)
               Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(5.dp, 0.dp)) {
                 Checkbox(
                   checked = log != null,
@@ -195,7 +206,10 @@ private fun findLogByActivityPeriod(
 @Composable
 fun DefaultPreview() {
   HomeMonitorTheme {
-    PetLogWidgetView(mockSubjects, mockPeriods, mockActivities, mockActivityPeriods, listOf(), { }, { })
+    PetLogWidgetView(
+      mockSubjects, mockPeriods, mockActivities, mockActivityPeriods, listOf(),
+      DateTime.now(), { }, { }
+    )
   }
 }
 
@@ -203,7 +217,8 @@ fun DefaultPreview() {
 @Composable
 fun LoadingPreview() {
   HomeMonitorTheme {
-    PetLogWidgetView(null, null, null, null, null, { }, { })
+    PetLogWidgetView(null, null, null, null, null,
+      DateTime.now(), { }, { })
   }
 }
 
