@@ -71,7 +71,8 @@ class DoorbellWidgetViewModel(context: Context) : ViewModel() {
     if (_contentIntent.value != null) {
       _contentIntent.value!!.send()
     } else {
-      val launchIntent: Intent? = _context.getPackageManager().getLaunchIntentForPackage("com.ring.answer")
+      val launchIntent: Intent? = _context.getPackageManager()
+        .getLaunchIntentForPackage("com.ring.answer")
       _context.startActivity(launchIntent)
     }
   }

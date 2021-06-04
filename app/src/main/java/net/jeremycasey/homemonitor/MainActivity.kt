@@ -55,4 +55,33 @@ class MainActivity : ComponentActivity() {
       }
     }
   }
+
+//  fun timedOpenAppBackUp() {
+//    val futureDate = DateTime.now().plusMillis(appCloseTimeoutMs)
+//
+//    val al = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//    val intent = Intent(this, AlarmReceiver::class.java)
+//    val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+//    al.set(AlarmManager.RTC_WAKEUP, futureDate.millis, pendingIntent)
+//
+//    val toast = Toast.makeText(this, "aaa", 3 * 1000)
+//    toast.show()
+//  }
+//
+//  override fun onPause() {
+//    super.onPause()
+//    timedOpenAppBackUp()
+//  }
 }
+
+//class AlarmReceiver : BroadcastReceiver() {
+//  override fun onReceive(context: Context, intent: Intent?) {
+//    val toast = Toast.makeText(context, "hello", 3 * 1000)
+//    toast.show()
+//
+//    val activityIntent = Intent(context, MainActivity::class.java)
+//    activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//    activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//    context.startActivity(activityIntent)
+//  }
+//}
