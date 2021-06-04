@@ -3,6 +3,7 @@ package net.jeremycasey.homemonitor.widgets.calendar
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
@@ -112,6 +114,29 @@ private fun formatTime(event: CalendarEvent, now: DateTime): String {
   return event.startDateTime.toString("HH:mm")
 }
 
+private fun groupEventsByDay(events: List<CalendarEvent>): List<GroupedEvent> {
+  val grouped = events.groupBy {
+    it.startDateTime.toLocalDate().toString("yyyy-MM-dd")
+  }
+
+  return grouped.map {
+    GroupedEvent(
+      date = DateTime(it.key),
+      events = it.value
+    )
+  }
+}
+
+private fun getGroupName(date: DateTime, now: DateTime): String {
+  if (date.toLocalDate() == now.toLocalDate()) {
+    return "Today"
+  } else if (date.toLocalDate() == now.plusDays(1).toLocalDate()) {
+    return "Tomorrow"
+  } else {
+    return date.toString("d MMM")
+  }
+}
+
 @Composable
 fun CalendarWidgetView(now: DateTime, upcomingEvents: List<CalendarEvent>?, fetchError: Exception?, onRetryClick: () -> Any) {
   if (fetchError != null) {
@@ -133,23 +158,29 @@ fun CalendarWidgetView(now: DateTime, upcomingEvents: List<CalendarEvent>?, fetc
     return
   }
 
+  val groupedEvents = groupEventsByDay(upcomingEvents)
+
   WidgetCard {
-    upcomingEvents.forEach { event ->
-      Row (modifier = Modifier.padding(0.dp, 5.dp)) {
-        Box(modifier = Modifier
-          .width(20.dp)
-          .height(30.dp)
-          .background(event.calendarColor)
-        )
-        Column {
-          Text(
-            event.title,
-            modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 0.dp)
+    groupedEvents.forEach { group ->
+      Text(getGroupName(group.date, now), style = MaterialTheme.typography.h6)
+      group.events.forEach { event ->
+        Row(modifier = Modifier.padding(0.dp, 5.dp)) {
+          Box(
+            modifier = Modifier
+              .width(20.dp)
+              .height(30.dp)
+              .background(event.calendarColor)
           )
-          Text(
-            formatTime(event, now),
-            modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 0.dp)
-          )
+          Column {
+            Text(
+              event.title,
+              modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 0.dp)
+            )
+            Text(
+              formatTime(event, now),
+              modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 0.dp)
+            )
+          }
         }
       }
     }

@@ -19,7 +19,6 @@ fun getAllEvents(context: Context): List<CalendarEvent> {
   while (calendarCursor.moveToNext()) {
     val accountName = calendarCursor.getString(0)
     val displayName = calendarCursor.getString(1)
-    println("Fetching cal $accountName, $displayName")
     events = events + getEventsForCalendar(context, accountName, displayName)
   }
   calendarCursor.close()

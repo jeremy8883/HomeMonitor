@@ -13,3 +13,8 @@ data class CalendarEvent(
   val startDateTime: DateTime,
   val endDateTime: DateTime,
 )
+
+data class GroupedEvent(
+  val date: DateTime,
+  val events: List<CalendarEvent>
+)
