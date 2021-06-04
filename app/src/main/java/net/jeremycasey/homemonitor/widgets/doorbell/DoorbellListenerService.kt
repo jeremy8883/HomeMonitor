@@ -18,6 +18,8 @@ class DoorbellListenerService : NotificationListenerService() {
       return
     }
 
+    cancelNotification(sbn.key)
+
     val title = sbn.notification.extras.getString("android.title") ?: return
 
     val eventType = when {
