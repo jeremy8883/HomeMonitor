@@ -27,6 +27,7 @@ import net.jeremycasey.homemonitor.R
 import net.jeremycasey.homemonitor.composables.WidgetCard
 import net.jeremycasey.homemonitor.composables.WithCurrentTime
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
+import net.jeremycasey.homemonitor.utils.openApp
 import net.jeremycasey.homemonitor.utils.toRelativeDateString
 import org.joda.time.DateTime
 
@@ -71,9 +72,7 @@ class DoorbellWidgetViewModel(context: Context) : ViewModel() {
     if (_contentIntent.value != null) {
       _contentIntent.value!!.send()
     } else {
-      val launchIntent: Intent? = _context.getPackageManager()
-        .getLaunchIntentForPackage("com.ring.answer")
-      _context.startActivity(launchIntent)
+      openApp(_context, "com.ring.answer")
     }
   }
 

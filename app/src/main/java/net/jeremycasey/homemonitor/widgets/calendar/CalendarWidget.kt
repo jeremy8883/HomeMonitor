@@ -1,6 +1,7 @@
 package net.jeremycasey.homemonitor.widgets.calendar
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -23,6 +24,7 @@ import net.jeremycasey.homemonitor.composables.LoadingPanel
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.composables.WidgetCard
 import net.jeremycasey.homemonitor.composables.WithCurrentTime
+import net.jeremycasey.homemonitor.utils.openApp
 import net.jeremycasey.homemonitor.widgets.calendar.api.getAllEvents
 import org.joda.time.DateTime
 
@@ -86,6 +88,10 @@ class CalendarWidgetViewModel(context: Context) : ViewModel() {
     _fetchError.value = null
     _upcomingEvents.value = getAllEvents(_context)
   }
+
+  fun onCalendarTouch() {
+    openApp(_context, "com.google.android.calendar")
+  }
 }
 
 @Composable
@@ -97,7 +103,13 @@ fun CalendarWidget(viewModel: CalendarWidgetViewModel) {
     viewModel.onCalendarRequired()
   }
   WithCurrentTime { now ->
-    CalendarWidgetView(now, currentCalendar, fetchError, { viewModel.onCalendarRequired() })
+    CalendarWidgetView(
+      now,
+      currentCalendar,
+      fetchError,
+      { viewModel.onCalendarRequired() },
+      { viewModel.onCalendarTouch() }
+    )
   }
 }
 
@@ -138,21 +150,27 @@ private fun getGroupName(date: DateTime, now: DateTime): String {
 }
 
 @Composable
-fun CalendarWidgetView(now: DateTime, upcomingEvents: List<CalendarEvent>?, fetchError: Exception?, onRetryClick: () -> Any) {
+fun CalendarWidgetView(
+  now: DateTime,
+  upcomingEvents: List<CalendarEvent>?,
+  fetchError: Exception?,
+  onRetryClick: () -> Any,
+  onClick: () -> Unit,
+) {
   if (fetchError != null) {
-    WidgetCard {
+    WidgetCard(onClick = onClick) {
       ErrorPanel(fetchError, onRetryClick)
     }
     return
   }
   if (upcomingEvents == null) {
-    WidgetCard {
+    WidgetCard(onClick = onClick) {
       LoadingPanel()
     }
     return
   }
   if (upcomingEvents.isEmpty()) {
-    WidgetCard {
+    WidgetCard(onClick = onClick) {
       Text("No upcoming events")
     }
     return
@@ -160,7 +178,7 @@ fun CalendarWidgetView(now: DateTime, upcomingEvents: List<CalendarEvent>?, fetc
 
   val groupedEvents = groupEventsByDay(upcomingEvents)
 
-  WidgetCard {
+  WidgetCard(onClick = onClick) {
     groupedEvents.forEach { group ->
       Text(getGroupName(group.date, now), style = MaterialTheme.typography.h6)
       group.events.forEach { event ->
@@ -191,7 +209,7 @@ fun CalendarWidgetView(now: DateTime, upcomingEvents: List<CalendarEvent>?, fetc
 @Composable
 fun DefaultPreview() {
   HomeMonitorTheme {
-    CalendarWidgetView(DateTime("2021-06-04T14:20:00+10:00"), mockTodaysEvents, null, {})
+    CalendarWidgetView(DateTime("2021-06-04T14:20:00+10:00"), mockTodaysEvents, null, {}, {})
   }
 }
 
@@ -199,7 +217,7 @@ fun DefaultPreview() {
 @Composable
 fun LoadingPreview() {
   HomeMonitorTheme {
-    CalendarWidgetView(DateTime("2021-06-04T14:20:00+10:00"), null, null, {})
+    CalendarWidgetView(DateTime("2021-06-04T14:20:00+10:00"), null, null, {}, {})
   }
 }
 
@@ -207,6 +225,6 @@ fun LoadingPreview() {
 @Composable
 fun ErrorPreview() {
   HomeMonitorTheme {
-    CalendarWidgetView(DateTime("2021-06-04T14:20:00+10:00"), null, Exception("This is an error"), { })
+    CalendarWidgetView(DateTime("2021-06-04T14:20:00+10:00"), null, Exception("This is an error"), { }, {})
   }
 }
