@@ -26,7 +26,9 @@ import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.utils.round
 import net.jeremycasey.homemonitor.composables.ErrorPanel
 import net.jeremycasey.homemonitor.composables.LoadingPanel
+import net.jeremycasey.homemonitor.composables.PollEffect
 import net.jeremycasey.homemonitor.composables.WidgetCard
+import net.jeremycasey.homemonitor.utils.hoursToMs
 import net.jeremycasey.homemonitor.widgets.weather.api.*
 
 val mockCurrentWeather = CurrentWeather(
@@ -102,7 +104,7 @@ fun WeatherWidget(viewModel: WeatherWidgetViewModel) {
   val currentWeather by viewModel.currentWeather.observeAsState()
   val fetchError by viewModel.fetchError.observeAsState()
 
-  LaunchedEffect("") {
+  PollEffect("", hoursToMs(1)) {
     viewModel.onWeatherRequired()
   }
 
