@@ -1,34 +1,33 @@
 package net.jeremycasey.homemonitor.widgets.ptv
 
 import android.content.Context
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import net.jeremycasey.homemonitor.composables.LoadingPanel
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
-import net.jeremycasey.homemonitor.utils.round
 import net.jeremycasey.homemonitor.composables.WidgetCard
+import net.jeremycasey.homemonitor.composables.WithCurrentTime
 import net.jeremycasey.homemonitor.private.ptvWatchedStops
+import net.jeremycasey.homemonitor.utils.getTimeRemaining
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchDepartures
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchRoute
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchStop
-import net.jeremycasey.homemonitor.widgets.weather.api.*
 import org.joda.time.DateTime
 
 val mockCurrentPtv = null
@@ -115,38 +114,104 @@ fun PtvWidget(viewModel: PtvWidgetViewModel) {
     viewModel.onPtvDataRequired()
   }
 
-  PtvWidgetView(stops as Map<Int, Stop>, routes as Map<Int, Route>, departures as Map<String, List<Departure>>)
+  WithCurrentTime(1000) {now ->
+    PtvWidgetView(
+      stops as Map<Int, Stop>,
+      routes as Map<Int, Route>,
+      departures as Map<String,
+      List<Departure>>,
+      now
+    )
+  }
+}
+
+private fun getDeparturesForStop(stopId: Int, departures: Map<String, List<Departure>>): List<Departure> {
+  return departures.values.flatten().filter { d -> d.stopId == stopId }
 }
 
 @Composable
-fun PtvWidgetView(stops: Map<Int, Stop>, routes: Map<Int, Route>, departures: Map<String, List<Departure>>) {
-  WidgetCard {
-    ptvWatchedStops.map {watchedStop ->
-      val stop = stops.get(watchedStop.stopId)
-      val route = routes.get(watchedStop.routeId)
-      val departure = departures.get(getDepartureId(watchedStop))
+private fun BigBox(bgColor: Color, content: @Composable BoxScope.() -> Unit) {
+  Box (
+    contentAlignment = Alignment.Center,
+    modifier = Modifier.width(40.dp).height(40.dp).background(bgColor).padding(5.dp)
+  ) {
+    content()
+  }
+}
 
-      Column (modifier = Modifier.padding(0.dp, 0.dp, 5.dp, 0.dp)) {
-        if (stop == null || route == null) {
-          LoadingPanel()
-        } else {
-          Text(
-            text = route.routeNumber,
-            style = MaterialTheme.typography.subtitle2,
-          )
-          if (departure == null) {
-            Text("...")
+@Composable
+fun PtvWidgetView(
+  stops: Map<Int, Stop>,
+  routes: Map<Int, Route>,
+  departures: Map<String, List<Departure>>,
+  now: DateTime
+) {
+  WidgetCard {
+    stops.values.forEach {stop ->
+      val departuresForStop = getDeparturesForStop(stop.stopId, departures)
+
+      Text(stop.stopName, style = MaterialTheme.typography.h6)
+
+      departuresForStop.forEach { d ->
+        Row {
+          val route = routes.get(d.routeId)
+          if (route != null) {
+            BigBox(Color.Blue) {
+              Text(
+                text = route.routeNumber,
+                style = TextStyle(
+                  textAlign = TextAlign.Center,
+                )
+              )
+            }
+            Box (modifier = Modifier.height(40.dp).padding(5.dp), contentAlignment = Alignment.CenterStart) {
+              Text(route.routeName)
+            }
           } else {
-            departure.map { d ->
-              if (d.estimatedDepartureUtc != null) {
-                Text(DateTime(d.estimatedDepartureUtc).toLocalTime().toString())
-              } else {
-                Text(DateTime(d.scheduledDepartureUtc).toLocalTime().toString())
-              }
+            Text("?")
+          }
+
+          BigBox(Color.Black) {
+            if (d.estimatedDepartureUtc != null) {
+              Text(
+                getTimeRemaining(DateTime(d.estimatedDepartureUtc), now),
+                style = TextStyle(color = Color.White)
+              )
+            } else {
+              Text(
+                getTimeRemaining(DateTime(d.scheduledDepartureUtc), now),
+                style = TextStyle(color = Color.White)
+              )
+              Text(
+                "Scheduled",
+                style = MaterialTheme.typography.subtitle2 + TextStyle(color = Color.White)
+              )
             }
           }
         }
       }
+
+//      Column (modifier = Modifier.padding(0.dp, 0.dp, 5.dp, 0.dp)) {
+//        if (stop == null || route == null) {
+//          LoadingPanel()
+//        } else {
+//          Text(
+//            text = route.routeNumber,
+//            style = MaterialTheme.typography.subtitle2,
+//          )
+//          if (departure == null) {
+//            Text("...")
+//          } else {
+//            departure.map { d ->
+//              if (d.estimatedDepartureUtc != null) {
+//                Text(DateTime(d.estimatedDepartureUtc).toLocalTime().toString())
+//              } else {
+//                Text(DateTime(d.scheduledDepartureUtc).toLocalTime().toString())
+//              }
+//            }
+//          }
+//        }
+//      }
     }
   }
 }
@@ -213,7 +278,7 @@ fun DefaultPreview() {
         flags = "RUN_98",
         departureSequence = 0
       )),
-    ))
+    ), DateTime("2021-06-01T10:32:30Z"))
   }
 }
 
@@ -221,7 +286,7 @@ fun DefaultPreview() {
 @Composable
 fun LoadingPreview() {
   HomeMonitorTheme {
-    PtvWidgetView(mapOf(), mapOf(), mapOf())
+    PtvWidgetView(mapOf(), mapOf(), mapOf(), DateTime("2021-06-01T10:45:00Z"))
   }
 }
 

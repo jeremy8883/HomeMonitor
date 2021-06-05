@@ -13,7 +13,7 @@ fun WithCurrentTime(
 ) {
   var now by remember { mutableStateOf(DateTime.now()) }
 
-  DisposableEffect("") {
+  DisposableEffect(recomposeInterval) {
     val handler = Handler(Looper.getMainLooper())
     val runnable: Runnable = object : Runnable {
       override fun run() {

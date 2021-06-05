@@ -28,3 +28,18 @@ fun toRelativeDateString(date: DateTime, now: DateTime): String {
 fun hoursToMs(hours: Long): Long {
   return hours * 60 * 60 * 1000
 }
+
+fun getTimeRemaining(date: DateTime, now: DateTime): String {
+  val period = Period(now, date)
+  val duration = period.toStandardDuration()
+
+  if (duration.standardSeconds <= 0) {
+    return "Now"
+  } else if (duration.standardSeconds < 60) {
+    return "< 1"
+  } else if (duration.standardMinutes < 60) {
+    return "${duration.standardMinutes}"
+  } else {
+    return date.toString("HH:mm")
+  }
+}
