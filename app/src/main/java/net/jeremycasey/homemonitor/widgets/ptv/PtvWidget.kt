@@ -24,6 +24,7 @@ import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.composables.WidgetCard
 import net.jeremycasey.homemonitor.composables.WithCurrentTime
 import net.jeremycasey.homemonitor.private.ptvWatchedStops
+import net.jeremycasey.homemonitor.utils.getReadableTextColor
 import net.jeremycasey.homemonitor.utils.getTimeRemaining
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchDepartures
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchRoute
@@ -130,13 +131,32 @@ private fun getDeparturesForStop(stopId: Int, departures: Map<String, List<Depar
 }
 
 @Composable
-private fun BigBox(bgColor: Color, content: @Composable BoxScope.() -> Unit) {
+private fun BigNumberBox(bgColor: Color, number: String, subText: String? = null) {
+  val textColor = getReadableTextColor(bgColor)
   Box (
     contentAlignment = Alignment.Center,
     modifier = Modifier.width(40.dp).height(40.dp).background(bgColor).padding(5.dp)
   ) {
-    content()
+    Text(
+      text = number,
+      style = MaterialTheme.typography.h5 + TextStyle(
+        textAlign = TextAlign.Center,
+        color = textColor
+      )
+    )
+    if (subText != null) {
+      Text(
+        subText,
+        style = MaterialTheme.typography.subtitle2 + TextStyle(color = textColor)
+      )
+    }
   }
+}
+
+private fun getRouteColor(routeId: Int): Color {
+  val ws = ptvWatchedStops.find { s -> s.routeId == routeId }
+  if (ws != null) return ws.routeColor
+  return Color.Magenta // Shouldn't happen
 }
 
 @Composable
@@ -156,14 +176,7 @@ fun PtvWidgetView(
         Row {
           val route = routes.get(d.routeId)
           if (route != null) {
-            BigBox(Color.Blue) {
-              Text(
-                text = route.routeNumber,
-                style = TextStyle(
-                  textAlign = TextAlign.Center,
-                )
-              )
-            }
+            BigNumberBox(getRouteColor(route.routeId), route.routeNumber)
             Box (modifier = Modifier.height(40.dp).padding(5.dp), contentAlignment = Alignment.CenterStart) {
               Text(route.routeName)
             }
@@ -171,22 +184,10 @@ fun PtvWidgetView(
             Text("?")
           }
 
-          BigBox(Color.Black) {
-            if (d.estimatedDepartureUtc != null) {
-              Text(
-                getTimeRemaining(DateTime(d.estimatedDepartureUtc), now),
-                style = TextStyle(color = Color.White)
-              )
-            } else {
-              Text(
-                getTimeRemaining(DateTime(d.scheduledDepartureUtc), now),
-                style = TextStyle(color = Color.White)
-              )
-              Text(
-                "Scheduled",
-                style = MaterialTheme.typography.subtitle2 + TextStyle(color = Color.White)
-              )
-            }
+          if (d.estimatedDepartureUtc != null) {
+            BigNumberBox(Color.Black, getTimeRemaining(DateTime(d.estimatedDepartureUtc), now))
+          } else {
+            BigNumberBox(Color.Black, getTimeRemaining(DateTime(d.scheduledDepartureUtc), now), "Scheduled")
           }
         }
       }

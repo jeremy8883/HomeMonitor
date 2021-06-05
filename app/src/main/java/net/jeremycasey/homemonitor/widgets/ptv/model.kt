@@ -1,5 +1,7 @@
 package net.jeremycasey.homemonitor.widgets.ptv
 
+import androidx.compose.ui.graphics.Color
+
 // Retrieved from /v3/route_types
 enum class RouteType(val value: Int) {
   train(0),
@@ -10,6 +12,7 @@ enum class RouteType(val value: Int) {
 }
 
 data class WatchedStop(
+  val routeColor: Color,
   val routeId: Int,
   val stopId: Int,
   val routeType: RouteType,
