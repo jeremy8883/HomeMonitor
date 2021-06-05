@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import net.jeremycasey.homemonitor.composables.*
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
+import net.jeremycasey.homemonitor.utils.minutesToMs
 import net.jeremycasey.homemonitor.utils.openApp
 import net.jeremycasey.homemonitor.widgets.calendar.api.getAllEvents
 import org.joda.time.DateTime
@@ -96,7 +97,7 @@ fun CalendarWidget(viewModel: CalendarWidgetViewModel) {
   val currentCalendar by viewModel.upcomingEvents.observeAsState()
   val fetchError by viewModel.fetchError.observeAsState()
 
-  LaunchedEffect("") {
+  PollEffect("", minutesToMs(5)) {
     viewModel.onCalendarRequired()
   }
   WithCurrentTime { now ->
