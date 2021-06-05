@@ -160,6 +160,11 @@ private fun getRouteColor(routeId: Int): Color {
 }
 
 @Composable
+private fun StopHeading(stopName: String) {
+  Text(stopName, style = MaterialTheme.typography.h6, modifier = Modifier.padding(0.dp, 5.dp))
+}
+
+@Composable
 fun PtvWidgetView(
   stops: Map<Int, Stop>,
   routes: Map<Int, Route>,
@@ -170,7 +175,7 @@ fun PtvWidgetView(
     stops.values.forEach {stop ->
       val departuresForStop = getDeparturesForStop(stop.stopId, departures)
 
-      Text(stop.stopName, style = MaterialTheme.typography.h6)
+      StopHeading(stop.stopName)
 
       departuresForStop.forEach { d ->
         Row {
@@ -191,28 +196,6 @@ fun PtvWidgetView(
           }
         }
       }
-
-//      Column (modifier = Modifier.padding(0.dp, 0.dp, 5.dp, 0.dp)) {
-//        if (stop == null || route == null) {
-//          LoadingPanel()
-//        } else {
-//          Text(
-//            text = route.routeNumber,
-//            style = MaterialTheme.typography.subtitle2,
-//          )
-//          if (departure == null) {
-//            Text("...")
-//          } else {
-//            departure.map { d ->
-//              if (d.estimatedDepartureUtc != null) {
-//                Text(DateTime(d.estimatedDepartureUtc).toLocalTime().toString())
-//              } else {
-//                Text(DateTime(d.scheduledDepartureUtc).toLocalTime().toString())
-//              }
-//            }
-//          }
-//        }
-//      }
     }
   }
 }
