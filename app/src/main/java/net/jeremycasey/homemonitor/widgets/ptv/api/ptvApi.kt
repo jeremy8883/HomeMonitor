@@ -6,10 +6,7 @@ import android.content.Context
 import com.android.volley.Response
 import net.jeremycasey.homemonitor.private.ptvApiKey
 import net.jeremycasey.homemonitor.private.ptvDevId
-import net.jeremycasey.homemonitor.widgets.ptv.Departure
-import net.jeremycasey.homemonitor.widgets.ptv.Route
-import net.jeremycasey.homemonitor.widgets.ptv.RouteType
-import net.jeremycasey.homemonitor.widgets.ptv.Stop
+import net.jeremycasey.homemonitor.widgets.ptv.*
 
 fun _buildTtapiUrl(path: String, developerId: String, privateKey: String): String {
   return TtApiUrl.buildTTAPIURL("https://timetableapi.ptv.vic.gov.au", privateKey, path, developerId)
@@ -54,6 +51,25 @@ fun fetchRoute(context: Context, routeId: Int, listener: Response.Listener<Route
   val request = GsonRequest<RouteResponse>(
     getPtvUrl("/v3/routes/$routeId"),
     RouteResponse::class.java,
+    null,
+    listener,
+    errorListener
+  )
+  VolleySingleton.getInstance(context).addToRequestQueue(request)
+}
+
+data class DirectionsResponse(
+  val directions: List<Direction>,
+  val status: Status
+)
+
+// GET /v3/directions/route/{route_id}
+// Get the possible directions a route can go
+// http://timetableapi.ptv.vic.gov.au/swagger/ui/index#!/Stops/Stops_StopDetails
+fun fetchDirectionsForRoute(context: Context, routeId: Int, listener: Response.Listener<DirectionsResponse>, errorListener: Response.ErrorListener) {
+  val request = GsonRequest<DirectionsResponse>(
+    getPtvUrl("/v3/directions/route/$routeId"),
+    DirectionsResponse::class.java,
     null,
     listener,
     errorListener

@@ -27,6 +27,7 @@ import net.jeremycasey.homemonitor.private.ptvWatchedStops
 import net.jeremycasey.homemonitor.utils.getReadableTextColor
 import net.jeremycasey.homemonitor.utils.getTimeRemaining
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchDepartures
+import net.jeremycasey.homemonitor.widgets.ptv.api.fetchDirectionsForRoute
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchRoute
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchStop
 import org.joda.time.DateTime
@@ -58,6 +59,9 @@ class PtvWidgetViewModel(context: Context) : ViewModel() {
   private val _routes = MutableLiveData<Map<Int, Route>>(mapOf())
   val routes: LiveData<Map<Int, Route>> = _routes
 
+  private val _directions = MutableLiveData<Map<Int, Direction>>(mapOf())
+  val directions: LiveData<Map<Int, Direction>> = _directions
+
   private val _departures = MutableLiveData<Map<String, List<Departure>>>(mapOf())
   val departures: LiveData<Map<String, List<Departure>>> = _departures
 
@@ -86,6 +90,15 @@ class PtvWidgetViewModel(context: Context) : ViewModel() {
           },
           { error -> println(error) } // TODO
         )
+
+        fetchDirectionsForRoute(_context, watchedStop.routeId,
+          { resp ->
+            resp.directions.forEach { d ->
+              _directions.value = _directions.value!! + Pair(d.directionId, d)
+            }
+          },
+          { error -> println(error) } // TODO
+        )
       }
 
       if (!_departures.value!!.containsKey(getDepartureId(watchedStop))) {
@@ -110,6 +123,7 @@ fun PtvWidget(viewModel: PtvWidgetViewModel) {
   val routes by viewModel.routes.observeAsState()
   val stops by viewModel.stops.observeAsState()
   val departures by viewModel.departures.observeAsState()
+  val directions by viewModel.directions.observeAsState()
 
   LaunchedEffect("") {
     viewModel.onPtvDataRequired()
@@ -119,8 +133,8 @@ fun PtvWidget(viewModel: PtvWidgetViewModel) {
     PtvWidgetView(
       stops as Map<Int, Stop>,
       routes as Map<Int, Route>,
-      departures as Map<String,
-      List<Departure>>,
+      directions as Map<Int, Direction>,
+      departures as Map<String, List<Departure>>,
       now
     )
   }
@@ -168,6 +182,7 @@ private fun StopHeading(stopName: String) {
 fun PtvWidgetView(
   stops: Map<Int, Stop>,
   routes: Map<Int, Route>,
+  directions: Map<Int, Direction>,
   departures: Map<String, List<Departure>>,
   now: DateTime
 ) {
@@ -182,8 +197,17 @@ fun PtvWidgetView(
           val route = routes.get(d.routeId)
           if (route != null) {
             BigNumberBox(getRouteColor(route.routeId), route.routeNumber)
-            Box (modifier = Modifier.height(40.dp).padding(5.dp), contentAlignment = Alignment.CenterStart) {
-              Text(route.routeName)
+          } else {
+            Text("?")
+          }
+
+          val direction = directions.get(d.directionId)
+          if (direction != null) {
+            Box(
+              modifier = Modifier.height(40.dp).padding(5.dp),
+              contentAlignment = Alignment.CenterStart
+            ) {
+              Text(direction.directionName)
             }
           } else {
             Text("?")
@@ -234,7 +258,31 @@ fun DefaultPreview() {
         routeName = "Hello - World",
         routeNumber = "333",
       ),
-    ), mapOf(
+    ),
+    mapOf(
+      ptvWatchedStops.get(0).directionId to Direction(
+        directionId = ptvWatchedStops.get(0).directionId,
+        directionName = "Frankston",
+        routeDirectionDescription = "Goes to Frankston",
+        routeId = ptvWatchedStops.get(0).routeId,
+        routeType = ptvWatchedStops.get(0).routeType
+      ),
+      ptvWatchedStops.get(1).directionId to Direction(
+        directionId = ptvWatchedStops.get(1).directionId,
+        directionName = "Bar",
+        routeDirectionDescription = "Goes to Bar",
+        routeId = ptvWatchedStops.get(1).routeId,
+        routeType = ptvWatchedStops.get(1).routeType
+      ),
+      ptvWatchedStops.get(2).directionId to Direction(
+        directionId = ptvWatchedStops.get(2).directionId,
+        directionName = "World",
+        routeDirectionDescription = "Goes to World",
+        routeId = ptvWatchedStops.get(2).routeId,
+        routeType = ptvWatchedStops.get(2).routeType
+      ),
+    ),
+    mapOf(
       getDepartureId(ptvWatchedStops.get(0)) to listOf(Departure(
         stopId = ptvWatchedStops.get(0).stopId,
         routeId = ptvWatchedStops.get(0).routeId,
@@ -270,7 +318,7 @@ fun DefaultPreview() {
 @Composable
 fun LoadingPreview() {
   HomeMonitorTheme {
-    PtvWidgetView(mapOf(), mapOf(), mapOf(), DateTime("2021-06-01T10:45:00Z"))
+    PtvWidgetView(mapOf(), mapOf(), mapOf(), mapOf(), DateTime("2021-06-01T10:45:00Z"))
   }
 }
 

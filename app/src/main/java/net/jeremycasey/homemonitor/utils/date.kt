@@ -36,7 +36,7 @@ fun getTimeRemaining(date: DateTime, now: DateTime): String {
   if (duration.standardSeconds <= 0) {
     return "Now"
   } else if (duration.standardSeconds < 60) {
-    return "< 1"
+    return "<1"
   } else if (duration.standardMinutes < 60) {
     return "${duration.standardMinutes}"
   } else {

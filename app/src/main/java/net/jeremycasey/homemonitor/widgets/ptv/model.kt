@@ -26,6 +26,14 @@ data class Route(
   val routeNumber: String,
 )
 
+data class Direction(
+  val directionId: Int,
+  val directionName: String,
+  val routeDirectionDescription: String,
+  val routeId: Int,
+  val routeType: RouteType
+)
+
 data class Stop(
   val routeType: RouteType,
   val stopId: Int,
