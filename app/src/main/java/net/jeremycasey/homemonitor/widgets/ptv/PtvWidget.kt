@@ -20,6 +20,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import net.jeremycasey.homemonitor.composables.PollEffect
 import net.jeremycasey.homemonitor.composables.Scrollable
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.composables.WidgetCard
@@ -27,6 +28,7 @@ import net.jeremycasey.homemonitor.composables.WithCurrentTime
 import net.jeremycasey.homemonitor.private.ptvWatchedStops
 import net.jeremycasey.homemonitor.utils.getReadableTextColor
 import net.jeremycasey.homemonitor.utils.getTimeRemaining
+import net.jeremycasey.homemonitor.utils.minutesToMs
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchDepartures
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchDirectionsForRoute
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchRoute
@@ -126,7 +128,7 @@ fun PtvWidget(viewModel: PtvWidgetViewModel) {
   val departures by viewModel.departures.observeAsState()
   val directions by viewModel.directions.observeAsState()
 
-  LaunchedEffect("") {
+  PollEffect("", minutesToMs(1)) {
     viewModel.onPtvDataRequired()
   }
 

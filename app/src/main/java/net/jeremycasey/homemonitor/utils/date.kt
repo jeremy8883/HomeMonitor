@@ -29,6 +29,10 @@ fun hoursToMs(hours: Long): Long {
   return hours * 60 * 60 * 1000
 }
 
+fun minutesToMs(mins: Long): Long {
+  return mins * 1000
+}
+
 fun getTimeRemaining(date: DateTime, now: DateTime): String {
   val period = Period(now, date)
   val duration = period.toStandardDuration()
