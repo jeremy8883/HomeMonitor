@@ -144,7 +144,17 @@ fun PtvWidget(viewModel: PtvWidgetViewModel) {
 }
 
 private fun getDeparturesForStop(stopId: Int, departures: Map<String, List<Departure>>): List<Departure> {
-  return departures.values.flatten().filter { d -> d.stopId == stopId }
+  return departures
+    .values
+    .flatten()
+    .filter { d -> d.stopId == stopId }
+    .sortedBy { d ->
+      if (d.estimatedDepartureUtc == null)
+        DateTime(d.scheduledDepartureUtc).millis
+      else
+        DateTime(d.estimatedDepartureUtc).millis
+    }
+    .take(3)
 }
 
 @Composable
