@@ -4,13 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.utils.Size
@@ -32,13 +30,20 @@ import net.jeremycasey.homemonitor.widgets.weather.WeatherWidget
 import net.jeremycasey.homemonitor.widgets.weather.WeatherWidgetViewModel
 import net.jeremycasey.homemonitor.widgets.weather.WeatherWidgetViewModelFactory
 
+private val rootPadding = 20
+private val itemPadding = 20
+
 @Composable
-private fun WidgetWrapper(percent: Double, screenSize: Size, content: @Composable BoxScope.() -> Unit) {
+private fun WidgetWrapper(
+  horizontalF: Float = 1f,
+  verticalF: Float = 1f,
+  content: @Composable BoxScope.() -> Unit
+) {
   Box(
     modifier = Modifier
-      .padding(20.dp)
-      .height(IntrinsicSize.Max)
-      .width(((screenSize.width - 40) * (percent / 100)).dp)
+      .padding(itemPadding.dp)
+      .fillMaxWidth(horizontalF)
+      .fillMaxHeight(verticalF)
   ) {
     content()
   }
@@ -69,23 +74,25 @@ class MainActivity : ComponentActivity() {
       HomeMonitorTheme {
         // A surface container using the 'background' color from the theme
         Surface(color = MaterialTheme.colors.background) {
-          Column (modifier = Modifier.padding(20.dp)) {
-            Row {
-              WidgetWrapper(50.0, screenSize) {
-                PetLogWidget(petLogViewModel)
+          Column (modifier = Modifier.padding(rootPadding.dp)) {
+            Row(Modifier.fillMaxHeight(0.5f)) {
+              Column(Modifier.fillMaxWidth(0.66f).fillMaxHeight()) {
+                WidgetWrapper(1f, 0.5f) {
+                  WeatherWidget(weatherWidgetViewModel)
+                }
+                WidgetWrapper(1f, 1f) {
+                  PetLogWidget(petLogViewModel)
+                }
               }
-              WidgetWrapper(25.0, screenSize) {
-                WeatherWidget(weatherWidgetViewModel)
-              }
-              WidgetWrapper(25.0, screenSize) {
+              WidgetWrapper(1f) {
                 PtvWidget(ptvViewModel)
               }
             }
-            Row {
-              WidgetWrapper(34.0, screenSize) {
+            Row (Modifier.fillMaxHeight(1f)) {
+              WidgetWrapper(0.34f) {
                 CalendarWidget(calendarViewModel)
               }
-              WidgetWrapper(66.0, screenSize) {
+              WidgetWrapper(1f) {
                 DoorbellWidget(doorbellViewModel)
               }
             }

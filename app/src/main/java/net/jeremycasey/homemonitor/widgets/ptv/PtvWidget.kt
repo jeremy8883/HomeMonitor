@@ -20,6 +20,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import net.jeremycasey.homemonitor.composables.Scrollable
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.composables.WidgetCard
 import net.jeremycasey.homemonitor.composables.WithCurrentTime
@@ -186,14 +187,14 @@ fun PtvWidgetView(
   departures: Map<String, List<Departure>>,
   now: DateTime
 ) {
-  WidgetCard {
+  WidgetCard(scrollable = Scrollable.vertical) {
     stops.values.forEach {stop ->
       val departuresForStop = getDeparturesForStop(stop.stopId, departures)
 
       StopHeading(stop.stopName)
 
       departuresForStop.forEach { d ->
-        Row {
+        Row (Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
           val route = routes.get(d.routeId)
           if (route != null) {
             BigNumberBox(getRouteColor(route.routeId), route.routeNumber)

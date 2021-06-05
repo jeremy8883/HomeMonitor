@@ -19,11 +19,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import net.jeremycasey.homemonitor.composables.ErrorPanel
-import net.jeremycasey.homemonitor.composables.LoadingPanel
+import net.jeremycasey.homemonitor.composables.*
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
-import net.jeremycasey.homemonitor.composables.WidgetCard
-import net.jeremycasey.homemonitor.composables.WithCurrentTime
 import net.jeremycasey.homemonitor.utils.openApp
 import net.jeremycasey.homemonitor.widgets.calendar.api.getAllEvents
 import org.joda.time.DateTime
@@ -184,7 +181,7 @@ fun CalendarWidgetView(
 
   val groupedEvents = groupEventsByDay(upcomingEvents)
 
-  WidgetCard(onClick = onClick) {
+  WidgetCard(onClick = onClick, scrollable = Scrollable.vertical) {
     groupedEvents.forEach { group ->
       Text(getGroupName(group.date, now), style = MaterialTheme.typography.h6)
       group.events.forEach { event ->
