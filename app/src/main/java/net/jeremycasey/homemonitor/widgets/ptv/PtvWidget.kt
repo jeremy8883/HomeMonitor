@@ -21,11 +21,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import net.jeremycasey.homemonitor.composables.PollEffect
-import net.jeremycasey.homemonitor.composables.Scrollable
+import net.jeremycasey.homemonitor.composables.*
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
-import net.jeremycasey.homemonitor.composables.WidgetCard
-import net.jeremycasey.homemonitor.composables.WithCurrentTime
 import net.jeremycasey.homemonitor.private.ptvWatchedStops
 import net.jeremycasey.homemonitor.utils.getReadableTextColor
 import net.jeremycasey.homemonitor.utils.getTimeRemaining
@@ -35,8 +32,7 @@ import net.jeremycasey.homemonitor.widgets.ptv.api.fetchDirectionsForRoute
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchRoute
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchStop
 import org.joda.time.DateTime
-
-val mockCurrentPtv = null
+import kotlin.collections.List
 
 class PtvWidgetViewModelFactory(context: Context) :
   ViewModelProvider.Factory {
@@ -197,6 +193,11 @@ private fun StopHeading(stopName: String) {
 }
 
 @Composable
+private fun Divider(): Unit {
+  Box(Modifier.fillMaxWidth().height(1.dp).background(Color.Gray))
+}
+
+@Composable
 fun PtvWidgetView(
   stops: Map<Int, Stop>,
   routes: Map<Int, Route>,
@@ -210,7 +211,7 @@ fun PtvWidgetView(
 
       StopHeading(stop.stopName)
 
-      departuresForStop.forEach { d ->
+      DividedList(departuresForStop, { Divider() }, Modifier.fillMaxWidth()) { d ->
         Row (Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
           val route = routes.get(d.routeId)
           if (route != null) {
