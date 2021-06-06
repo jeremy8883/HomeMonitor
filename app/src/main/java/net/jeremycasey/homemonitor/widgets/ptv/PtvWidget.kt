@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -162,7 +163,11 @@ private fun BigNumberBox(bgColor: Color, number: String, subText: String? = null
   val textColor = getReadableTextColor(bgColor)
   Box (
     contentAlignment = Alignment.Center,
-    modifier = Modifier.width(40.dp).height(40.dp).background(bgColor).padding(5.dp)
+    modifier = Modifier
+      .width(40.dp)
+      .height(40.dp)
+      .background(bgColor)
+      .padding(5.dp)
   ) {
     Text(
       text = number,
@@ -217,7 +222,10 @@ fun PtvWidgetView(
           val direction = directions.get(d.directionId)
           if (direction != null) {
             Box(
-              modifier = Modifier.height(40.dp).padding(5.dp),
+              modifier = Modifier
+                .height(40.dp)
+                .padding(10.dp, 5.dp)
+                .weight(1f),
               contentAlignment = Alignment.CenterStart
             ) {
               Text(direction.directionName)
