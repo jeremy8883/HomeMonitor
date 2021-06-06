@@ -154,33 +154,6 @@ private fun getDeparturesForStop(stopId: Int, departures: Map<String, List<Depar
     .take(3)
 }
 
-@Composable
-private fun BigNumberBox(bgColor: Color, number: String, subText: String? = null) {
-  val textColor = getReadableTextColor(bgColor)
-  Box (
-    contentAlignment = Alignment.Center,
-    modifier = Modifier
-      .width(40.dp)
-      .height(40.dp)
-      .background(bgColor)
-      .padding(5.dp)
-  ) {
-    Text(
-      text = number,
-      style = MaterialTheme.typography.h5 + TextStyle(
-        textAlign = TextAlign.Center,
-        color = textColor
-      )
-    )
-    if (subText != null) {
-      Text(
-        subText,
-        style = MaterialTheme.typography.subtitle2 + TextStyle(color = textColor)
-      )
-    }
-  }
-}
-
 private fun getRouteColor(routeId: Int): Color {
   val ws = ptvWatchedStops.find { s -> s.routeId == routeId }
   if (ws != null) return ws.routeColor
