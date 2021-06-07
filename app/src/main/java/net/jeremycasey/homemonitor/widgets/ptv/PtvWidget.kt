@@ -101,19 +101,17 @@ class PtvWidgetViewModel(context: Context) : ViewModel() {
         )
       }
 
-      if (!_departures.value!!.containsKey(getDepartureId(watchedStop))) {
-        fetchDepartures(
-          _context,
-          watchedStop.routeId,
-          watchedStop.stopId,
-          watchedStop.directionId,
-          3,
-          { resp ->
-            _departures.value = _departures.value!! + Pair(getDepartureId(watchedStop), resp.departures)
-          },
-          { error -> println(error) } // TODO
-        )
-      }
+      fetchDepartures(
+        _context,
+        watchedStop.routeId,
+        watchedStop.stopId,
+        watchedStop.directionId,
+        3,
+        { resp ->
+          _departures.value = _departures.value!! + Pair(getDepartureId(watchedStop), resp.departures)
+        },
+        { error -> println(error) } // TODO
+      )
     }
   }
 }
