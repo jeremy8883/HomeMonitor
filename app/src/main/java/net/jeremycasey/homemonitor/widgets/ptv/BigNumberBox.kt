@@ -33,7 +33,13 @@ fun BigNumberBox(bgColor: Color, number: String, subText: String? = null) {
       style = TextStyle(
         textAlign = TextAlign.Center,
         color = textColor,
-        fontSize = if (number.length <= 4) { 20.sp } else { 14.sp },
+        fontSize = if (number.length <= 2) {
+          20.sp
+        } else if (number.length <= 4) {
+          16.sp
+        } else {
+          14.sp
+        },
       ),
       // lineHeight doesn't do anything...why?
 //      modifier = Modifier.offset(y = -1.dp)
@@ -60,6 +66,7 @@ fun StandardPreview() {
 @Composable
 fun LightPreview() {
   HomeMonitorTheme {
+    // Currently doesn't work
     BigNumberBox(Color.Yellow, "20")
   }
 }
@@ -77,6 +84,14 @@ fun ScheduledPreview() {
 fun LessThan1Preview() {
   HomeMonitorTheme {
     BigNumberBox(Color.Black, "<1")
+  }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ArrivingNowPreview() {
+  HomeMonitorTheme {
+    BigNumberBox(Color.Black, "Now")
   }
 }
 
