@@ -30,7 +30,7 @@ fun hoursToMs(hours: Long): Long {
 }
 
 fun minutesToMs(mins: Long): Long {
-  return mins * 1000
+  return mins * 60 * 1000
 }
 
 fun getTimeRemaining(date: DateTime, now: DateTime): String {

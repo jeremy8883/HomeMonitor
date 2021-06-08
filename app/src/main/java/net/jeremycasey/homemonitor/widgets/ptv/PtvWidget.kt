@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,8 +12,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
@@ -22,9 +19,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import net.jeremycasey.homemonitor.composables.*
-import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
+import net.jeremycasey.homemonitor.private.ptvWatchPeriods
 import net.jeremycasey.homemonitor.private.ptvWatchedStops
-import net.jeremycasey.homemonitor.utils.getReadableTextColor
+import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.utils.getTimeRemaining
 import net.jeremycasey.homemonitor.utils.minutesToMs
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchDepartures
@@ -32,7 +29,6 @@ import net.jeremycasey.homemonitor.widgets.ptv.api.fetchDirectionsForRoute
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchRoute
 import net.jeremycasey.homemonitor.widgets.ptv.api.fetchStop
 import org.joda.time.DateTime
-import kotlin.collections.List
 
 class PtvWidgetViewModelFactory(context: Context) :
   ViewModelProvider.Factory {
@@ -100,7 +96,11 @@ class PtvWidgetViewModel(context: Context) : ViewModel() {
           { error -> println(error) } // TODO
         )
       }
+    }
+  }
 
+  fun onPtvDeparturesRequired() {
+    ptvWatchedStops.forEach { watchedStop ->
       fetchDepartures(
         _context,
         watchedStop.routeId,
@@ -108,12 +108,26 @@ class PtvWidgetViewModel(context: Context) : ViewModel() {
         watchedStop.directionId,
         3,
         { resp ->
-          _departures.value = _departures.value!! + Pair(getDepartureId(watchedStop), resp.departures)
+          _departures.value = _departures.value!! + Pair(
+            getDepartureId(watchedStop),
+            resp.departures
+          )
         },
         { error -> println(error) } // TODO
       )
     }
   }
+}
+
+@Composable
+fun getIsWatching(watchPeriods: List<WatchPeriod>, now: DateTime): Boolean {
+  val currentTime = now.toLocalTime()
+  val watchPeriod = watchPeriods.find { wp ->
+    now.dayOfWeek == wp.dayOfWeek &&
+    currentTime >= wp.startTime &&
+    currentTime < wp.endTime
+  }
+  return watchPeriod != null
 }
 
 @Composable
@@ -123,16 +137,23 @@ fun PtvWidget(viewModel: PtvWidgetViewModel) {
   val departures by viewModel.departures.observeAsState()
   val directions by viewModel.directions.observeAsState()
 
-  PollEffect("", minutesToMs(1)) {
+  LaunchedEffect(Unit) {
     viewModel.onPtvDataRequired()
   }
 
   WithCurrentTime(1000) {now ->
+    val isWatching = getIsWatching(ptvWatchPeriods, now)
+
+    PollEffect(Unit, minutesToMs(1), isWatching) {
+      viewModel.onPtvDeparturesRequired()
+    }
+
     PtvWidgetView(
       stops as Map<Int, Stop>,
       routes as Map<Int, Route>,
       directions as Map<Int, Direction>,
       departures as Map<String, List<Departure>>,
+      isWatching,
       now
     )
   }
@@ -165,7 +186,11 @@ private fun StopHeading(stopName: String) {
 
 @Composable
 private fun Divider(): Unit {
-  Box(Modifier.fillMaxWidth().height(1.dp).background(Color.Gray))
+  Box(
+    Modifier
+      .fillMaxWidth()
+      .height(1.dp)
+      .background(Color.Gray))
 }
 
 @Composable
@@ -174,8 +199,16 @@ fun PtvWidgetView(
   routes: Map<Int, Route>,
   directions: Map<Int, Direction>,
   departures: Map<String, List<Departure>>,
+  isWatching: Boolean,
   now: DateTime
 ) {
+  if (!isWatching) {
+    WidgetCard {
+      Text("PTV timetable")
+    }
+    return
+  }
+
   WidgetCard(scrollable = Scrollable.vertical) {
     stops.values.forEach {stop ->
       val departuresForStop = getDeparturesForStop(stop.stopId, departures)
@@ -303,7 +336,7 @@ fun DefaultPreview() {
         flags = "RUN_98",
         departureSequence = 0
       )),
-    ), DateTime("2021-06-01T10:32:30Z"))
+    ), true, DateTime("2021-06-01T10:32:30Z"))
   }
 }
 
@@ -311,7 +344,7 @@ fun DefaultPreview() {
 @Composable
 fun LoadingPreview() {
   HomeMonitorTheme {
-    PtvWidgetView(mapOf(), mapOf(), mapOf(), mapOf(), DateTime("2021-06-01T10:45:00Z"))
+    PtvWidgetView(mapOf(), mapOf(), mapOf(), mapOf(), true, DateTime("2021-06-01T10:45:00Z"))
   }
 }
 

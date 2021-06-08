@@ -1,6 +1,7 @@
 package net.jeremycasey.homemonitor.widgets.ptv
 
 import androidx.compose.ui.graphics.Color
+import org.joda.time.LocalTime
 
 // Retrieved from /v3/route_types
 enum class RouteType(val value: Int) {
@@ -53,4 +54,10 @@ data class Departure(
   val runRef: String,
   val scheduledDepartureUtc: String,
   val stopId: Int
+)
+
+data class WatchPeriod(
+  val dayOfWeek: Int, // 0 = Sunday
+  val startTime: LocalTime,
+  val endTime: LocalTime,
 )

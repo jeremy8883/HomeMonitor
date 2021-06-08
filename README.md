@@ -31,11 +31,16 @@ val ptvDevId = "123456"
 val ptvApiKey = "00000000-aaaa-bbbb-cccc-dddddddddddd"
 val ptvWatchedStops = listOf(
   TimetableInfo(
+    routeColor = Color(0xfff58023),
     routeId = 111,
     stopId = 222,
     routeType = RouteType.tram,
     directionId = 3
   ),
+  // ...
+)
+val ptvWatchPeriods = listOf(
+  WatchPeriod(4, LocalTime(8, 0), LocalTime(9, 30)),
   // ...
 )
 ```
