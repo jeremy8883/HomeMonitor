@@ -3,11 +3,10 @@ package net.jeremycasey.homemonitor.widgets.ptv
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -120,7 +119,10 @@ class PtvWidgetViewModel(context: Context) : ViewModel() {
 }
 
 @Composable
-fun getIsWatching(watchPeriods: List<WatchPeriod>, now: DateTime): Boolean {
+fun getIsWatching(watchPeriods: List<WatchPeriod>, now: DateTime, manualWatchUntil: DateTime?): Boolean {
+  if (manualWatchUntil != null && now < manualWatchUntil) {
+    return true
+  }
   val currentTime = now.toLocalTime()
   val watchPeriod = watchPeriods.find { wp ->
     now.dayOfWeek == wp.dayOfWeek &&
@@ -142,7 +144,8 @@ fun PtvWidget(viewModel: PtvWidgetViewModel) {
   }
 
   WithCurrentTime(1000) {now ->
-    val isWatching = getIsWatching(ptvWatchPeriods, now)
+    var manualWatchUntil by remember { mutableStateOf<DateTime?>(null) }
+    val isWatching = getIsWatching(ptvWatchPeriods, now, manualWatchUntil)
 
     PollEffect(Unit, minutesToMs(1), isWatching) {
       viewModel.onPtvDeparturesRequired()
@@ -154,7 +157,8 @@ fun PtvWidget(viewModel: PtvWidgetViewModel) {
       directions as Map<Int, Direction>,
       departures as Map<String, List<Departure>>,
       isWatching,
-      now
+      now,
+      { manualWatchUntil = DateTime.now().plusMinutes(30) }
     )
   }
 }
@@ -200,11 +204,17 @@ fun PtvWidgetView(
   directions: Map<Int, Direction>,
   departures: Map<String, List<Departure>>,
   isWatching: Boolean,
-  now: DateTime
+  now: DateTime,
+  onCheckTimesClick: () -> Unit
 ) {
   if (!isWatching) {
     WidgetCard {
-      Text("PTV timetable")
+      Column {
+        Text("PTV timetable", Modifier.padding(0.dp, 0.dp, 0.dp, 4.dp))
+        Button(onClick = { onCheckTimesClick() }) {
+          Text("Check times")
+        }
+      }
     }
     return
   }
@@ -336,7 +346,7 @@ fun DefaultPreview() {
         flags = "RUN_98",
         departureSequence = 0
       )),
-    ), true, DateTime("2021-06-01T10:32:30Z"))
+    ), true, DateTime("2021-06-01T10:32:30Z"), {})
   }
 }
 
@@ -344,7 +354,7 @@ fun DefaultPreview() {
 @Composable
 fun LoadingPreview() {
   HomeMonitorTheme {
-    PtvWidgetView(mapOf(), mapOf(), mapOf(), mapOf(), true, DateTime("2021-06-01T10:45:00Z"))
+    PtvWidgetView(mapOf(), mapOf(), mapOf(), mapOf(), true, DateTime("2021-06-01T10:45:00Z"), {})
   }
 }
 
