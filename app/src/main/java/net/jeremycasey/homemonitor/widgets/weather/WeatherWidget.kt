@@ -1,10 +1,8 @@
 package net.jeremycasey.homemonitor.widgets.weather
 
 import android.content.Context
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -22,12 +20,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import net.jeremycasey.homemonitor.composables.*
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.utils.round
-import net.jeremycasey.homemonitor.composables.ErrorPanel
-import net.jeremycasey.homemonitor.composables.LoadingPanel
-import net.jeremycasey.homemonitor.composables.PollEffect
-import net.jeremycasey.homemonitor.composables.WidgetCard
 import net.jeremycasey.homemonitor.utils.hoursToMs
 import net.jeremycasey.homemonitor.widgets.weather.api.*
 
@@ -111,6 +106,10 @@ fun WeatherWidget(viewModel: WeatherWidgetViewModel) {
   WeatherWidgetView(currentWeather, fetchError, { viewModel.onWeatherRequired() })
 }
 
+private fun getWeatherIcon(weather: Weather): String {
+  return "https://openweathermap.org/img/wn/${weather.icon}@2x.png"
+}
+
 @Composable
 fun WeatherWidgetView(currentWeather: CurrentWeather?, fetchError: Exception?, onRetryClick: () -> Any) {
   if (fetchError != null) {
@@ -131,12 +130,18 @@ fun WeatherWidgetView(currentWeather: CurrentWeather?, fetchError: Exception?, o
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically
     ) {
+      RemoteImage(
+        src = getWeatherIcon(currentWeather.weather[0]),
+        contentDescription = null,
+        modifier = Modifier.width(100.dp).height(100.dp)
+      )
+
       Text(
         text = "${round(currentWeather.main.temp, 0).toInt()}°",
         style = MaterialTheme.typography.h1 + TextStyle(
           lineHeight = 0.sp
         ),
-        modifier = Modifier.padding(0.dp, 0.dp, 20.dp, 0.dp)
+        modifier = Modifier.padding(10.dp, 0.dp, 20.dp, 0.dp)
       )
       Column {
         Text(
