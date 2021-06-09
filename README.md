@@ -43,8 +43,35 @@ val ptvWatchPeriods = listOf(
   WatchPeriod(4, LocalTime(8, 0), LocalTime(9, 30)),
   // ...
 )
+
+// Message board config
+val messageBoardItems = mapOf<String, MessageItemConfig>(
+  "baby_supplies" to MessageItemConfig(
+    code = "baby_supplies",
+    type = "supplies",
+    message = "Baby stock up required",
+    imageResource = R.drawable.message_board_baby_supplies,
+  ),
+)
 ```
+
+### Doorbell Widget
 
 You'll need the Rapid Ring app installed.
 
 Once you've installed this HomeMonitor app, go to the system Settings -> Apps and Notifications -> Special app access -> Notification access, and ensure that the Home Monitor app is checked.
+
+### Message Board Widget
+
+To post items on the message board, you'll need to send an android intent with the following info:
+
+Action: `net.jeremycasey.homemonitor.POST_MESSAGE`
+Extras:
+* Key: `code`
+* Value: To match the value in your private `messageBoardItems`
+Package: `net.jeremycasey.homemonitor`
+Target: Activity
+  
+I've done this by ordering some [Flic](https://flic.io/) smart buttons, which allows you to link the button to android intents.
+
+Typical use case, I'm upstairs, I run out of nappies, so I press the smart button, and it will show a reminder on the monitor downstairs to bring them up.

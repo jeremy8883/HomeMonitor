@@ -28,16 +28,3 @@ fun hideSystemUi(window: Window) {
       or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
       or View.SYSTEM_UI_FLAG_FULLSCREEN)
 }
-
-data class Size (
-  val width: Double,
-  val height: Double,
-)
-
-fun getScreenSize(ca: ComponentActivity): Size {
-  val displayMetrics = DisplayMetrics()
-  ca.windowManager.getDefaultDisplay().getMetrics(displayMetrics)
-  val height = displayMetrics.heightPixels
-  val width = displayMetrics.widthPixels
-  return Size(width.toDouble(), height.toDouble())
-}

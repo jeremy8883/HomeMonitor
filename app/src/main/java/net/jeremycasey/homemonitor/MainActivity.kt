@@ -11,8 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
-import net.jeremycasey.homemonitor.utils.Size
-import net.jeremycasey.homemonitor.utils.getScreenSize
 import net.jeremycasey.homemonitor.utils.hideSystemUi
 import net.jeremycasey.homemonitor.widgets.calendar.CalendarWidget
 import net.jeremycasey.homemonitor.widgets.calendar.CalendarWidgetViewModel
@@ -57,6 +55,8 @@ private fun WidgetWrapper(
 }
 
 class MainActivity : ComponentActivity() {
+  lateinit var _messageBoardViewModel: MessageBoardWidgetViewModel
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -78,7 +78,9 @@ class MainActivity : ComponentActivity() {
     val messageBoardViewModel by viewModels<MessageBoardWidgetViewModel>() {
       MessageBoardWidgetViewModelFactory(this)
     }
-    val screenSize = getScreenSize(this)
+    _messageBoardViewModel = messageBoardViewModel
+
+    broadcastIntentToViewModelsIfNeeded(this.intent)
 
     setContent {
       HomeMonitorTheme {
@@ -120,10 +122,21 @@ class MainActivity : ComponentActivity() {
     }
   }
 
+  private fun broadcastIntentToViewModelsIfNeeded(intent: Intent?) {
+    if (intent != null) {
+      _messageBoardViewModel.onIntentReceived(intent)
+    }
+  }
+
   // Code taken from: https://developer.android.com/training/system-ui/immersive
   override fun onWindowFocusChanged(hasFocus: Boolean) {
     super.onWindowFocusChanged(hasFocus)
     if (hasFocus) hideSystemUi(window)
+  }
+
+  override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+    broadcastIntentToViewModelsIfNeeded(intent)
   }
 
 //  fun timedOpenAppBackUp() {

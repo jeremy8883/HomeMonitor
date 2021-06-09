@@ -99,7 +99,7 @@ fun WeatherWidget(viewModel: WeatherWidgetViewModel) {
   val currentWeather by viewModel.currentWeather.observeAsState()
   val fetchError by viewModel.fetchError.observeAsState()
 
-  PollEffect("", hoursToMs(1)) {
+  PollEffect(Unit, hoursToMs(1)) {
     viewModel.onWeatherRequired()
   }
 
