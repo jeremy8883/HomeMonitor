@@ -20,6 +20,7 @@ import net.jeremycasey.homemonitor.widgets.calendar.CalendarWidgetViewModelFacto
 import net.jeremycasey.homemonitor.widgets.doorbell.DoorbellWidget
 import net.jeremycasey.homemonitor.widgets.doorbell.DoorbellWidgetViewModel
 import net.jeremycasey.homemonitor.widgets.doorbell.DoorbellWidgetViewModelFactory
+import net.jeremycasey.homemonitor.widgets.messageBoard.MessageBoardWidget
 import net.jeremycasey.homemonitor.widgets.petLog.PetLogWidget
 import net.jeremycasey.homemonitor.widgets.petLog.PetLogWidgetViewModel
 import net.jeremycasey.homemonitor.widgets.petLog.PetLogWidgetViewModelFactory
@@ -29,6 +30,12 @@ import net.jeremycasey.homemonitor.widgets.ptv.PtvWidgetViewModelFactory
 import net.jeremycasey.homemonitor.widgets.weather.WeatherWidget
 import net.jeremycasey.homemonitor.widgets.weather.WeatherWidgetViewModel
 import net.jeremycasey.homemonitor.widgets.weather.WeatherWidgetViewModelFactory
+import android.widget.Toast
+
+import android.content.Intent
+import net.jeremycasey.homemonitor.widgets.messageBoard.MessageBoardWidgetViewModel
+import net.jeremycasey.homemonitor.widgets.messageBoard.MessageBoardWidgetViewModelFactory
+
 
 private val rootPadding = 20
 private val itemPadding = 20
@@ -68,6 +75,9 @@ class MainActivity : ComponentActivity() {
     val calendarViewModel by viewModels<CalendarWidgetViewModel>() {
       CalendarWidgetViewModelFactory(this)
     }
+    val messageBoardViewModel by viewModels<MessageBoardWidgetViewModel>() {
+      MessageBoardWidgetViewModelFactory(this)
+    }
     val screenSize = getScreenSize(this)
 
     setContent {
@@ -76,9 +86,17 @@ class MainActivity : ComponentActivity() {
         Surface(color = MaterialTheme.colors.background) {
           Column (modifier = Modifier.padding(rootPadding.dp)) {
             Row(Modifier.fillMaxHeight(0.5f)) {
-              Column(Modifier.fillMaxWidth(0.66f).fillMaxHeight()) {
-                WidgetWrapper(1f, 0.5f) {
-                  WeatherWidget(weatherWidgetViewModel)
+              Column(
+                Modifier
+                  .fillMaxWidth(0.66f)
+                  .fillMaxHeight()) {
+                Row(Modifier.fillMaxSize()) {
+                  WidgetWrapper(0.5f, 1f) {
+                    WeatherWidget(weatherWidgetViewModel)
+                  }
+                  WidgetWrapper(1f, 1f) {
+                    MessageBoardWidget(messageBoardViewModel)
+                  }
                 }
                 WidgetWrapper(1f, 1f) {
                   PetLogWidget(petLogViewModel)

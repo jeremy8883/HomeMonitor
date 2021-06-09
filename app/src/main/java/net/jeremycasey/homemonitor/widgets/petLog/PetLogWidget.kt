@@ -117,7 +117,7 @@ fun PetLogWidget(viewModel: PetLogWidgetViewModel) {
   val periods by viewModel.periods.observeAsState()
   val logs by viewModel.logs.observeAsState()
 
-  LaunchedEffect("") {
+  LaunchedEffect(Unit) {
     viewModel.onPetDataRequired()
   }
 

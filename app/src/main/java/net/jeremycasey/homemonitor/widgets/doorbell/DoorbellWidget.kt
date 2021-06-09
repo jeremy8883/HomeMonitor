@@ -102,7 +102,7 @@ class DoorbellWidgetViewModel(context: Context) : ViewModel() {
 fun DoorbellWidget(viewModel: DoorbellWidgetViewModel) {
   val latestEvent by viewModel.latestEvent.observeAsState()
 
-  DisposableEffect("") {
+  DisposableEffect(Unit) {
     viewModel.onDoorbellListenerStart()
 
     onDispose {
