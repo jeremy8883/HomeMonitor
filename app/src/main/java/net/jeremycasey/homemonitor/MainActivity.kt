@@ -92,7 +92,7 @@ class MainActivity : ComponentActivity() {
                 Modifier
                   .fillMaxWidth(0.66f)
                   .fillMaxHeight()) {
-                Row(Modifier.fillMaxSize()) {
+                Row(Modifier.fillMaxWidth().fillMaxHeight(0.5f)) {
                   WidgetWrapper(0.5f, 1f) {
                     WeatherWidget(weatherWidgetViewModel)
                   }
