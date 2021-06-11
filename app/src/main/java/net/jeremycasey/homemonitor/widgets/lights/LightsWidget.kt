@@ -25,9 +25,10 @@ import net.jeremycasey.homemonitor.widgets.weather.api.*
 
 val mockLightGroups = mapOf(
   "1" to LightGroup(
+    id = "1",
     name = "Living room",
     lights = listOf( "1", "12", "10" ),
-    sensors = listOf(),
+//    sensors = listOf(),
     type = "Room",
     state = LightGroupState( allOn = false, anyOn = false ),
     recycle = false,
@@ -45,9 +46,10 @@ val mockLightGroups = mapOf(
     ),
   ),
   "2" to LightGroup(
+    id = "2",
     name = "Study",
     lights = listOf( "1", "5" ),
-    sensors = listOf(),
+//    sensors = listOf(),
     type = "Room",
     state = LightGroupState( allOn = true, anyOn = true ),
     recycle = false,
@@ -65,9 +67,10 @@ val mockLightGroups = mapOf(
     )
   ),
   "3" to LightGroup(
+    id = "3",
     name = "Master bedroom",
     lights = listOf("14", "13", "6" ),
-    sensors = listOf(),
+//    sensors = listOf(),
     type = "Room",
     state = LightGroupState(allOn = true, anyOn = true),
     recycle = false,
@@ -148,6 +151,9 @@ fun LightsWidgetView(groupIdsToShow: List<String>, allGroups: Map<String, LightG
 
   WidgetCard {
     groupIdsToShow.forEach { groupId ->
+      println("!!")
+      println(groupId)
+      println(allGroups)
       val group = allGroups.get(groupId) ?: return@forEach
 
       Row(

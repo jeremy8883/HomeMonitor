@@ -23,15 +23,14 @@ data class LightState(
 )
 
 data class LightGroup(
+  val id: String,
   val action: LightGroupAction,
   val `class`: String,
   val lights: List<String>,
-//  val locations: Map<String, List<Double>>,
   val name: String,
   val recycle: Boolean,
-  val sensors: List<Any>,
+//  val sensors: List<Any>,
   val state: LightGroupState,
-//  val stream: Stream,
   val type: String
 )
 

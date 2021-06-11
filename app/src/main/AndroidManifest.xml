@@ -12,6 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HomeMonitor"
+        android:usesCleartextTraffic="true"
         >
         <!-- Re: screenOrientation="landscape". I would like to not have this,
         but there's a bug where the broadcast receiver keeps crashing on rotation.
