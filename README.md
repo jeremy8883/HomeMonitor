@@ -53,6 +53,11 @@ val messageBoardItems = mapOf<String, MessageItemConfig>(
     imageResource = R.drawable.message_board_baby_supplies,
   ),
 )
+
+// Philips Hue lights
+val hueHostAddress = "http://10.0.0.111/"
+val hueUsername = "abcdef1234" // get from here: https://developers.meethue.com/develop/get-started-2/
+val hueGroupIds = arrayOf("1", "5", "4")
 ```
 
 ### Doorbell Widget

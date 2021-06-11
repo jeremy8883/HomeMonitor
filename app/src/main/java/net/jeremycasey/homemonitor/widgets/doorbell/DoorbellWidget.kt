@@ -122,7 +122,10 @@ fun DoorbellWidgetView(latestEvent: DoorbellEvent?, now: DateTime, onCardTouch: 
     if (latestEvent != null) {
       Column {
         Text(latestEvent.title)
-        Text(toRelativeDateString(latestEvent.dateTime, now), style = MaterialTheme.typography.subtitle1)
+        Text(
+          toRelativeDateString(latestEvent.dateTime, now),
+          style = MaterialTheme.typography.subtitle1
+        )
         Image(
           painter = BitmapPainter(latestEvent.picture.asImageBitmap()),
           contentDescription = null
