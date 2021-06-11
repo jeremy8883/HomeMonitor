@@ -5,12 +5,13 @@ A private android app that I use for my home tablet, which I hang on the wall.
 ## Upcoming Features
 
 * [X] Weather
-* [ ] Pet feeding 
-* [ ] PTV tram timetable
-* [ ] Ring doorbell support (sort of)
+* [X] Pet feeding
+* [X] PTV tram timetable
+* [X] Ring doorbell support (sort of)
 * [ ] Link with Hue lights
 * [ ] Barcode scanner to add items to shopping list
-* [ ] Notifications when we need to bring items upstairs
+* [X] Notifications when we need to bring items upstairs
+* [X] Calendar
 
 ## Getting started
 
