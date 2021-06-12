@@ -149,7 +149,7 @@ private fun getGroupName(date: DateTime, now: DateTime): String {
   } else if (date.toLocalDate() == now.plusDays(1).toLocalDate()) {
     return "Tomorrow"
   } else {
-    return date.toString("d MMM")
+    return date.toString("EEE, d MMM")
   }
 }
 
@@ -209,7 +209,7 @@ fun CalendarWidgetView(
   }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 300,heightDp = 300)
 @Composable
 fun DefaultPreview() {
   HomeMonitorTheme {
@@ -217,7 +217,7 @@ fun DefaultPreview() {
   }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 300,heightDp = 300)
 @Composable
 fun LoadingPreview() {
   HomeMonitorTheme {
@@ -225,7 +225,7 @@ fun LoadingPreview() {
   }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 300,heightDp = 300)
 @Composable
 fun ErrorPreview() {
   HomeMonitorTheme {
