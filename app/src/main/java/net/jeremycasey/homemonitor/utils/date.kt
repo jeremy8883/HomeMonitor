@@ -25,6 +25,10 @@ fun toRelativeDateString(date: DateTime, now: DateTime): String {
   return formatter.print(period)
 }
 
+fun secondsToMs(seconds: Long): Long {
+  return seconds * 1000
+}
+
 fun hoursToMs(hours: Long): Long {
   return hours * 60 * 60 * 1000
 }

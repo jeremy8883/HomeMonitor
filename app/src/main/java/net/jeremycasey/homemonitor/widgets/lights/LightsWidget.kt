@@ -20,6 +20,7 @@ import net.jeremycasey.homemonitor.composables.*
 import net.jeremycasey.homemonitor.private.hueGroupIds
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.utils.hoursToMs
+import net.jeremycasey.homemonitor.utils.secondsToMs
 import net.jeremycasey.homemonitor.widgets.lights.api.changeGroupState
 import net.jeremycasey.homemonitor.widgets.lights.api.fetchGroups
 import net.jeremycasey.homemonitor.widgets.weather.api.*
@@ -134,7 +135,7 @@ fun LightsWidget(viewModel: LightsWidgetViewModel) {
   val allGroups by viewModel.allGroups.observeAsState()
   val fetchError by viewModel.fetchError.observeAsState()
 
-  PollEffect(Unit, hoursToMs(1)) {
+  PollEffect(Unit, secondsToMs(10)) {
     viewModel.onLightGroupsRequired()
   }
 
@@ -192,7 +193,7 @@ fun LightsWidgetView(
   }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 300, heightDp = 200)
 @Composable
 fun DefaultPreview() {
   HomeMonitorTheme {
@@ -200,7 +201,7 @@ fun DefaultPreview() {
   }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 300, heightDp = 200)
 @Composable
 fun LoadingPreview() {
   HomeMonitorTheme {
@@ -208,7 +209,7 @@ fun LoadingPreview() {
   }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 300, heightDp = 200)
 @Composable
 fun ErrorPreview() {
   HomeMonitorTheme {
