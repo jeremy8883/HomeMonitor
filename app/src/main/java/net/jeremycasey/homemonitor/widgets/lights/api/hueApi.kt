@@ -5,6 +5,7 @@ import android.content.Context
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.HttpHeaderParser
+import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
@@ -14,6 +15,10 @@ import net.jeremycasey.homemonitor.private.*
 import net.jeremycasey.homemonitor.widgets.lights.*
 import java.lang.reflect.Type
 import java.nio.charset.Charset
+import org.json.JSONObject
+
+
+
 
 private fun getHueUrl(path: String): String {
   return "${hueHostAddress}api/${hueUsername}${path}"
@@ -35,8 +40,6 @@ fun fetchGroups(context: Context, listener: (lightGroups: Map<String, LightGroup
   val request = StringRequest(
     Request.Method.GET, getHueUrl("/groups"),
     { response ->
-      println("??/")
-      println(response)
       val gson = GsonBuilder()
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create()
@@ -72,7 +75,6 @@ fun fetchGroups(context: Context, listener: (lightGroups: Map<String, LightGroup
           type = value.get("type") as String
         ))
       }
-      println(parsedGroups)
 
       listener(parsedGroups)
     },
@@ -89,27 +91,26 @@ fun fetchGroups(context: Context, listener: (lightGroups: Map<String, LightGroup
  *   hue?: number, - hue, in range 0 - 65535
  * }
  */
-//fun changeGroupState(id: String, state: LightGroupStateAction, context: Context, listener: (Map<String, LightGroup>) -> Unit, errorListener: Response.ErrorListener) {
-//  val request = StringRequest(
-//    Request.Method.GET, getHueUrl("/lights/$id/state"),
-//    { response ->
-//      val gson = GsonBuilder()
-//        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-//        .create()
-//      val groups = gson.fromJson(response, Map::class.java)
-//      listener(groups as Map<String, LightGroup>)
-//    },
-//    errorListener
-//  )
-//
-//  VolleySingleton.getInstance(context).addToRequestQueue(request)
-//
-//  val request = GsonRequest<LightGroup>(
-//    getHueUrl("/lights/$id/state"),
-//    LightGroup::class.java, // TODO PUT, body: state: LightGroupStateAction
-//    null,
-//    listener,
-//    errorListener
-//  )
-//  VolleySingleton.getInstance(context).addToRequestQueue(request)
-//}
+fun changeGroupState(id: String, state: LightGroupStateAction, context: Context, listener: () -> Unit, errorListener: Response.ErrorListener) {
+  val jsonBody = JSONObject()
+  if (state.hue != null) {
+    jsonBody.put("hue", state.hue)
+  }
+  if (state.on != null) {
+    jsonBody.put("on", state.on)
+  }
+
+  val request = GsonRequest(
+    Request.Method.PUT,
+    getHueUrl("/groups/$id/action"),
+    Object::class.java,
+    null,
+    { response ->
+      listener()
+    },
+    errorListener,
+    jsonBody,
+  )
+
+  VolleySingleton.getInstance(context).addToRequestQueue(request)
+}

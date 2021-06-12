@@ -2,6 +2,7 @@ package net.jeremycasey.homemonitor.widgets.weather.api
 
 import GsonRequest
 import android.content.Context
+import com.android.volley.Request
 import com.android.volley.Response
 import net.jeremycasey.homemonitor.private.apiKey
 import net.jeremycasey.homemonitor.private.cityId
@@ -43,6 +44,7 @@ Example:
  */
 fun fetchCurrentWeather(context: Context, listener: Response.Listener<CurrentWeather>, errorListener: Response.ErrorListener) {
   val request = GsonRequest<CurrentWeather>(
+    Request.Method.GET,
     "https://api.openweathermap.org/data/2.5/weather?id=$cityId&appid=$apiKey&units=$units",
     CurrentWeather::class.java,
     null,

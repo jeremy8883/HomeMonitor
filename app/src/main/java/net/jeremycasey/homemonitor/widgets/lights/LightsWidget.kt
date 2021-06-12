@@ -20,6 +20,7 @@ import net.jeremycasey.homemonitor.composables.*
 import net.jeremycasey.homemonitor.private.hueGroupIds
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.utils.hoursToMs
+import net.jeremycasey.homemonitor.widgets.lights.api.changeGroupState
 import net.jeremycasey.homemonitor.widgets.lights.api.fetchGroups
 import net.jeremycasey.homemonitor.widgets.weather.api.*
 
@@ -114,6 +115,18 @@ class LightsWidgetViewModel(context: Context) : ViewModel() {
       }
     )
   }
+
+  fun onToggleGroup(groupId: String, isOn: Boolean) {
+    changeGroupState(
+      groupId, LightGroupStateAction(on = isOn), _context,
+      {
+        onLightGroupsRequired()
+      },
+      {
+        println(it)
+      }
+    )
+  }
 }
 
 @Composable
@@ -130,12 +143,18 @@ fun LightsWidget(viewModel: LightsWidgetViewModel) {
     allGroups,
     fetchError,
     { viewModel.onLightGroupsRequired() },
-    { }, // TODO implement toggles
+    { groupId, isOn -> viewModel.onToggleGroup(groupId, isOn) },
   )
 }
 
 @Composable
-fun LightsWidgetView(groupIdsToShow: List<String>, allGroups: Map<String, LightGroup>?, fetchError: Exception?, onRetryClick: () -> Any, onToggle: (isOn: Boolean) -> Unit ) {
+fun LightsWidgetView(
+  groupIdsToShow: List<String>,
+  allGroups: Map<String, LightGroup>?,
+  fetchError: Exception?,
+  onRetryClick: () -> Any,
+  onToggle: (groupId: String, isOn: Boolean) -> Unit
+) {
   if (fetchError != null) {
     WidgetCard {
       ErrorPanel(fetchError, onRetryClick)
@@ -151,16 +170,16 @@ fun LightsWidgetView(groupIdsToShow: List<String>, allGroups: Map<String, LightG
 
   WidgetCard {
     groupIdsToShow.forEach { groupId ->
-      println("!!")
-      println(groupId)
-      println(allGroups)
       val group = allGroups.get(groupId) ?: return@forEach
 
       Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
       ) {
-        Switch(checked = group.state.anyOn, onCheckedChange = { onToggle(it) })
+        Switch(
+          checked = group.state.anyOn,
+          onCheckedChange = { onToggle(groupId, it) }
+        )
         Text(
           text = group.name,
           style = TextStyle(
@@ -177,7 +196,7 @@ fun LightsWidgetView(groupIdsToShow: List<String>, allGroups: Map<String, LightG
 @Composable
 fun DefaultPreview() {
   HomeMonitorTheme {
-    LightsWidgetView(listOf("1", "2", "3"), mockLightGroups, null, { }, { })
+    LightsWidgetView(listOf("1", "2", "3"), mockLightGroups, null, { }, { _, _ -> })
   }
 }
 
@@ -185,7 +204,7 @@ fun DefaultPreview() {
 @Composable
 fun LoadingPreview() {
   HomeMonitorTheme {
-    LightsWidgetView(listOf("1", "2", "3"), null, null, { }, { })
+    LightsWidgetView(listOf("1", "2", "3"), null, null, { }, { _, _ -> })
   }
 }
 
@@ -193,6 +212,6 @@ fun LoadingPreview() {
 @Composable
 fun ErrorPreview() {
   HomeMonitorTheme {
-    LightsWidgetView(listOf("1", "2", "3"), null, Exception("This is an error"), { }, { })
+    LightsWidgetView(listOf("1", "2", "3"), null, Exception("This is an error"), { }, { _, _ -> })
   }
 }

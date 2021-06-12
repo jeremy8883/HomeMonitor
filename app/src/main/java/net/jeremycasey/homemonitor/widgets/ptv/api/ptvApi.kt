@@ -3,6 +3,7 @@ package net.jeremycasey.homemonitor.widgets.ptv.api
 import GsonRequest
 import VolleySingleton
 import android.content.Context
+import com.android.volley.Request
 import com.android.volley.Response
 import net.jeremycasey.homemonitor.private.ptvApiKey
 import net.jeremycasey.homemonitor.private.ptvDevId
@@ -31,6 +32,7 @@ data class StopResponse(
 // http://timetableapi.ptv.vic.gov.au/swagger/ui/index#!/Stops/Stops_StopDetails
 fun fetchStop(context: Context, stopId: Int, routeType: RouteType, listener: Response.Listener<StopResponse>, errorListener: Response.ErrorListener) {
   val request = GsonRequest<StopResponse>(
+    Request.Method.GET,
     getPtvUrl("/v3/stops/$stopId/route_type/${routeType.value}"),
     StopResponse::class.java,
     null,
@@ -49,6 +51,7 @@ data class RouteResponse(
 // http://timetableapi.ptv.vic.gov.au/swagger/ui/index#!/Stops/Stops_StopDetails
 fun fetchRoute(context: Context, routeId: Int, listener: Response.Listener<RouteResponse>, errorListener: Response.ErrorListener) {
   val request = GsonRequest<RouteResponse>(
+    Request.Method.GET,
     getPtvUrl("/v3/routes/$routeId"),
     RouteResponse::class.java,
     null,
@@ -68,6 +71,7 @@ data class DirectionsResponse(
 // http://timetableapi.ptv.vic.gov.au/swagger/ui/index#!/Stops/Stops_StopDetails
 fun fetchDirectionsForRoute(context: Context, routeId: Int, listener: Response.Listener<DirectionsResponse>, errorListener: Response.ErrorListener) {
   val request = GsonRequest<DirectionsResponse>(
+    Request.Method.GET,
     getPtvUrl("/v3/directions/route/$routeId"),
     DirectionsResponse::class.java,
     null,
@@ -92,6 +96,7 @@ data class DeparturesResponse(
 // http://timetableapi.ptv.vic.gov.au/swagger/ui/index#!/Departures/Departures_GetForStopAndRoute
 fun fetchDepartures(context: Context, routeId: Int, stopId: Int, directionId: Int, maxResults: Int, listener: Response.Listener<DeparturesResponse>, errorListener: Response.ErrorListener) {
   val request = GsonRequest<DeparturesResponse>(
+    Request.Method.GET,
     getPtvUrl("/v3/departures/route_type/1/stop/$stopId/route/$routeId" +
         "?direction_id=$directionId&max_results=$maxResults"),
     DeparturesResponse::class.java,

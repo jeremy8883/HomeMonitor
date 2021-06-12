@@ -63,7 +63,7 @@ private fun getForcedEndDate(
 
 private fun getEventsForCalendar(context: Context, calendar: Calendar): List<CalendarEvent> {
   val startMillis: Long = DateTime.now().millis
-  val endMillis: Long = DateTime.now().plusDays(2).withTimeAtStartOfDay().millis
+  val endMillis: Long = DateTime.now().plusDays(7).withTimeAtStartOfDay().millis
 
   val builder = Instances.CONTENT_URI.buildUpon()
   ContentUris.appendId(builder, startMillis)

@@ -59,6 +59,6 @@ data class Stream(
 )
 
 data class LightGroupStateAction(
-  val hue: Int?,
-  val on: Boolean?
+  val hue: Int? = null,
+  val on: Boolean? = null
 )
