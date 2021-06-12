@@ -9,6 +9,7 @@ import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 enum class Scrollable {
@@ -18,7 +19,9 @@ enum class Scrollable {
 }
 
 @Composable
-fun WidgetCard(onClick: (() -> Unit)? = null, scrollable: Scrollable = Scrollable.none, content: @Composable ColumnScope.() -> Unit) {
+fun WidgetCard(onClick: (() -> Unit)? = null, scrollable: Scrollable = Scrollable.none,
+               padding: Dp = 16.dp,
+               content: @Composable ColumnScope.() -> Unit) {
   // I tried using IntrinsicSize.Max, but it wouldn't work. Now I need to prop drill the width and height of every single widget.
   var modifier = Modifier.fillMaxSize()
   if (onClick != null ) {
@@ -39,7 +42,7 @@ fun WidgetCard(onClick: (() -> Unit)? = null, scrollable: Scrollable = Scrollabl
     modifier = modifier
   ) {
     Box(innerModifier) {
-      Column(modifier = Modifier.padding(16.dp), content = content)
+      Column(modifier = Modifier.padding(padding), content = content)
     }
   }
 }

@@ -31,6 +31,7 @@ import net.jeremycasey.homemonitor.widgets.weather.WeatherWidgetViewModelFactory
 import android.widget.Toast
 
 import android.content.Intent
+import net.jeremycasey.homemonitor.widgets.clock.ClockWidget
 import net.jeremycasey.homemonitor.widgets.lights.LightsWidget
 import net.jeremycasey.homemonitor.widgets.lights.LightsWidgetViewModel
 import net.jeremycasey.homemonitor.widgets.lights.LightsWidgetViewModelFactory
@@ -124,8 +125,13 @@ class MainActivity : ComponentActivity() {
               WidgetWrapper(0.5f) {
                 DoorbellWidget(doorbellViewModel)
               }
-              WidgetWrapper(1f) {
-                LightsWidget(lightsViewModel)
+              Column(Modifier.fillMaxSize(1f)) {
+                WidgetWrapper(1f, 0.5f) {
+                  LightsWidget(lightsViewModel)
+                }
+                WidgetWrapper(1f, 1f) {
+                  ClockWidget()
+                }
               }
             }
           }
