@@ -4,6 +4,7 @@ A private android app that I use for my home tablet, which I hang on the wall.
 
 ## Upcoming Features
 
+* [X] Clock
 * [X] Weather
 * [X] Pet feeding
 * [X] PTV tram timetable
