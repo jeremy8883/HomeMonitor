@@ -45,7 +45,10 @@ fun generateBackgroundImage(activity: Activity, lights: List<Light>): Bitmap {
 }
 
 private fun getColorsFromLights(lights: List<Light>): List<Int> {
-  return lights.map { getLightColor(it) }
+  return lights
+    // This just happened to match how my lamp was set up. Not sure how best to sort this.
+    .sortedByDescending { it.id }
+    .map { getLightColor(it) }
 }
 
 private fun getCacheId(colors: List<Int>): String {
