@@ -2,15 +2,11 @@ package net.jeremycasey.homemonitor.utils
 
 import android.app.Activity
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Paint
 import androidx.core.graphics.set
+import getLightColor
 import net.jeremycasey.homemonitor.widgets.lights.Light
 
-private fun blurBitmap() {
-
-}
 
 fun generateBackgroundImage(activity: Activity, lights: List<Light>): Bitmap {
   val size = getScreenSize(activity)
@@ -32,19 +28,5 @@ private fun getColorsFromLights(lights: List<Light>): List<Int> {
   if (lights.size == 0) {
     return listOf(Color.BLACK)
   }
-
-  return lights.map { light ->
-    val hue = light.state.hue
-    val sat = light.state.sat
-    val bri = light.state.bri
-    if (hue == null || sat == null) {
-      Color.argb(1, bri, bri, bri)
-    } else {
-//      3280, 252, 254
-//      53522, 253, 254
-//      14655, 252, 254
-      println("${hue}, ${sat}, ${bri}") // TODO fix
-      Color.HSVToColor(floatArrayOf(hue.toFloat(), sat.toFloat(), bri.toFloat()))
-    }
-  }
+  return lights.map { getLightColor(it) }
 }
