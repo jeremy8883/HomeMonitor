@@ -23,8 +23,7 @@ fun generateBackgroundImage(activity: Activity, lights: List<Light>): Bitmap {
       bitmap.set(x, y, color)
     }
   }
-  addGaussianBlur(bitmap)
-  return bitmap
+  return addGaussianBlur(bitmap, 1f, 400)
 }
 
 private fun getColorsFromLights(lights: List<Light>): List<Int> {
