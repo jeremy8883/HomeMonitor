@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import net.jeremycasey.homemonitor.composables.BitmapTransition
 import net.jeremycasey.homemonitor.utils.generateBackgroundImage
 import net.jeremycasey.homemonitor.widgets.clock.ClockWidget
 import net.jeremycasey.homemonitor.widgets.lights.Light
@@ -105,9 +106,10 @@ class MainActivity : ComponentActivity() {
 
         // A surface container using the 'background' color from the theme
         Surface(color = MaterialTheme.colors.background) {
-          Image(
-            painter = BitmapPainter(background.asImageBitmap()),
-            contentDescription = null, modifier = Modifier.fillMaxSize(1f),
+          BitmapTransition(
+            bitmap = background,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(1f),
             contentScale = ContentScale.FillBounds
           )
           Column (modifier = Modifier.padding(rootPadding.dp)) {
