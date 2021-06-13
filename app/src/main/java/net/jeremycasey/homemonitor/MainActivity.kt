@@ -49,8 +49,8 @@ import net.jeremycasey.homemonitor.widgets.messageBoard.MessageBoardWidgetViewMo
 import net.jeremycasey.homemonitor.widgets.messageBoard.MessageBoardWidgetViewModelFactory
 
 
-private val rootPadding = 20
-private val itemPadding = 20
+private val rootPadding = 10
+private val itemPadding = 10
 
 @Composable
 private fun WidgetWrapper(
