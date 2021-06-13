@@ -146,7 +146,10 @@ class MainActivity : ComponentActivity() {
               }
               Column(Modifier.fillMaxSize(1f)) {
                 WidgetWrapper(1f, 0.5f) {
-                  LightsWidget(lightsViewModel, { background = generateBackgroundImage(this@MainActivity, it) })
+                  LightsWidget(
+                    lightsViewModel,
+                    { background = generateBackgroundImage(this@MainActivity, it) }
+                  )
                 }
                 WidgetWrapper(1f, 1f) {
                   ClockWidget()

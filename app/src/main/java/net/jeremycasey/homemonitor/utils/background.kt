@@ -6,6 +6,11 @@ import android.graphics.Color
 import androidx.core.graphics.set
 import getLightColor
 import net.jeremycasey.homemonitor.widgets.lights.Light
+import java.util.*
+
+var imageCache = WeakHashMap<String, Bitmap>()
+
+val emptyImage = createEmptyImage(Color.WHITE)
 
 /**
  * As the lights change, we also change the background to match
@@ -16,7 +21,12 @@ fun generateBackgroundImage(activity: Activity, lights: List<Light>): Bitmap {
   val colorCount = colors.size
 
   if (colorCount == 0) {
-    return createEmptyImage(Color.WHITE)
+    return emptyImage
+  }
+
+  val cacheId = getCacheId(colors)
+  if (imageCache.containsKey(cacheId)) {
+    return imageCache.get(cacheId) as Bitmap
   }
 
   val bitmap = Bitmap.createBitmap(size.width, size.height, Bitmap.Config.ARGB_8888)
@@ -27,9 +37,17 @@ fun generateBackgroundImage(activity: Activity, lights: List<Light>): Bitmap {
       bitmap.set(x, y, color)
     }
   }
-  return addGaussianBlur(bitmap, 1f, 400)
+  val blurredBitmap = addGaussianBlur(bitmap, 1f, 400)
+
+  imageCache.set(cacheId, blurredBitmap)
+
+  return blurredBitmap
 }
 
 private fun getColorsFromLights(lights: List<Light>): List<Int> {
   return lights.map { getLightColor(it) }
+}
+
+private fun getCacheId(colors: List<Int>): String {
+  return colors.joinToString("|")
 }
