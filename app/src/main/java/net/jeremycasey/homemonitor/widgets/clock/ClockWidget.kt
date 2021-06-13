@@ -1,9 +1,6 @@
 package net.jeremycasey.homemonitor.widgets.clock
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -11,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,12 +29,15 @@ fun ClockWidgetView(now: DateTime) {
   WidgetCard(padding = 0.dp) {
     Column(
       horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center,
       modifier = Modifier.fillMaxSize(1f)
     ) {
       Text(
         text = now.toString("HH:mm"),
-        style = MaterialTheme.typography.h2 + TextStyle(
-          lineHeight = 0.sp
+        style = TextStyle(
+          lineHeight = 0.sp,
+          fontSize = 80.sp,
+          fontWeight = FontWeight.Bold
         ),
         modifier = Modifier
           .padding(10.dp, 0.dp, 20.dp, 0.dp)
@@ -47,7 +48,7 @@ fun ClockWidgetView(now: DateTime) {
           color = Color(0xFF878787),
           fontSize = 34.sp,
         ),
-        modifier = Modifier.offset(y = -10.dp)
+        modifier = Modifier.offset(y = -10.dp).padding(0.dp, 0.dp, 0.dp, 10.dp)
       )
     }
   }
