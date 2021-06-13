@@ -1,11 +1,12 @@
 package net.jeremycasey.homemonitor.utils
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.view.Window
 import android.util.DisplayMetrics
-import androidx.activity.ComponentActivity
+import android.util.Size
 
 
 fun openApp(context: Context, packageName: String) {
@@ -27,4 +28,12 @@ fun hideSystemUi(window: Window) {
       // Hide the nav bar and status bar
       or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
       or View.SYSTEM_UI_FLAG_FULLSCREEN)
+}
+
+fun getScreenSize(activity: Activity): Size {
+  val displayMetrics = DisplayMetrics()
+  activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+  val height = displayMetrics.heightPixels
+  val width = displayMetrics.widthPixels
+  return Size(width, height)
 }

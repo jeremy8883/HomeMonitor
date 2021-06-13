@@ -30,9 +30,15 @@ import net.jeremycasey.homemonitor.widgets.weather.WeatherWidgetViewModelFactory
 import android.widget.Toast
 
 import android.content.Intent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.layout.ContentScale
+import net.jeremycasey.homemonitor.utils.generateBackgroundImage
 import net.jeremycasey.homemonitor.widgets.clock.ClockWidget
 import net.jeremycasey.homemonitor.widgets.lights.Light
 import net.jeremycasey.homemonitor.widgets.lights.LightsWidget
@@ -95,10 +101,13 @@ class MainActivity : ComponentActivity() {
     setContent {
       HomeMonitorTheme {
         var backgroundEffectLights by remember { mutableStateOf<List<Light>>(listOf()) }
+        // TODO memoize this
+        val background = BitmapPainter(generateBackgroundImage(this, backgroundEffectLights).asImageBitmap())
         println(backgroundEffectLights)
 
         // A surface container using the 'background' color from the theme
         Surface(color = MaterialTheme.colors.background) {
+          Image(painter = background, contentDescription = null, modifier = Modifier.fillMaxSize(1f), contentScale = ContentScale.FillBounds)
           Column (modifier = Modifier.padding(rootPadding.dp)) {
             Row(Modifier.fillMaxHeight(0.5f)) {
               Column(
