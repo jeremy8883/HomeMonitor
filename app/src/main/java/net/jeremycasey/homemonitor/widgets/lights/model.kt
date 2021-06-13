@@ -1,9 +1,10 @@
 package net.jeremycasey.homemonitor.widgets.lights
 
 data class Light(
+  val id: String,
   val modelid: String,
   val name: String,
-  val pointsymbol: Map<String, String>,
+//  val pointsymbol: Map<String, String>,
   val state: LightState,
   val swversion: String,
   val type: String
@@ -12,14 +13,14 @@ data class Light(
 data class LightState(
   val alert: String,
   val bri: Int,
-  val colormode: String,
-  val ct: Int,
-  val effect: String,
-  val hue: Int,
+  val colormode: String?,
+  val ct: Int?,
+  val effect: String?,
+  val hue: Int?,
   val on: Boolean,
   val reachable: Boolean,
-  val sat: Int,
-  val xy: List<Double>
+  val sat: Int?,
+  val xy: List<Double>?
 )
 
 data class LightGroup(

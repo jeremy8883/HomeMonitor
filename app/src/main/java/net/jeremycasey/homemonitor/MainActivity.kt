@@ -7,7 +7,6 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
@@ -31,7 +30,11 @@ import net.jeremycasey.homemonitor.widgets.weather.WeatherWidgetViewModelFactory
 import android.widget.Toast
 
 import android.content.Intent
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import net.jeremycasey.homemonitor.widgets.clock.ClockWidget
+import net.jeremycasey.homemonitor.widgets.lights.Light
 import net.jeremycasey.homemonitor.widgets.lights.LightsWidget
 import net.jeremycasey.homemonitor.widgets.lights.LightsWidgetViewModel
 import net.jeremycasey.homemonitor.widgets.lights.LightsWidgetViewModelFactory
@@ -91,6 +94,9 @@ class MainActivity : ComponentActivity() {
 
     setContent {
       HomeMonitorTheme {
+        var backgroundEffectLights by remember { mutableStateOf<List<Light>>(listOf()) }
+        println(backgroundEffectLights)
+
         // A surface container using the 'background' color from the theme
         Surface(color = MaterialTheme.colors.background) {
           Column (modifier = Modifier.padding(rootPadding.dp)) {
@@ -127,7 +133,7 @@ class MainActivity : ComponentActivity() {
               }
               Column(Modifier.fillMaxSize(1f)) {
                 WidgetWrapper(1f, 0.5f) {
-                  LightsWidget(lightsViewModel)
+                  LightsWidget(lightsViewModel, { backgroundEffectLights = it })
                 }
                 WidgetWrapper(1f, 1f) {
                   ClockWidget()

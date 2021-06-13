@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -20,11 +21,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import net.jeremycasey.homemonitor.composables.*
 import net.jeremycasey.homemonitor.private.hueGroupIds
+import net.jeremycasey.homemonitor.private.mainGroupId
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
-import net.jeremycasey.homemonitor.utils.hoursToMs
 import net.jeremycasey.homemonitor.utils.secondsToMs
 import net.jeremycasey.homemonitor.widgets.lights.api.changeGroupState
 import net.jeremycasey.homemonitor.widgets.lights.api.fetchGroups
+import net.jeremycasey.homemonitor.widgets.lights.api.fetchLights
 import net.jeremycasey.homemonitor.widgets.weather.api.*
 
 val mockLightGroups = mapOf(
@@ -97,24 +99,38 @@ class LightsWidgetViewModelFactory(context: Context) :
   }
 }
 
-class LightsWidgetViewModel(context: Context) : ViewModel() {
-  private val _groups = MutableLiveData<Map<String, LightGroup>?>(null)
-  val allGroups: LiveData<Map<String, LightGroup>?> = _groups
+class LightsWidgetViewModel(
+  context: Context,
+) : ViewModel() {
+  private val _allGroups = MutableLiveData<Map<String, LightGroup>?>(null)
+  val allGroups: LiveData<Map<String, LightGroup>?> = _allGroups
+
+  private val _allLights = MutableLiveData<Map<String, Light>?>(null)
+  val allLights: LiveData<Map<String, Light>?> = _allLights
 
   private val _context = context
 
-  private val _fetchError = MutableLiveData<Exception?>(null)
-  val fetchError: LiveData<Exception?> = _fetchError
+  private val _groupFetchError = MutableLiveData<Exception?>(null)
+  val groupFetchError: LiveData<Exception?> = _groupFetchError
 
-  fun onLightGroupsRequired() {
-    _fetchError.value = null
+  fun onLightDataRequired() {
+    _groupFetchError.value = null
     fetchGroups(
       _context,
       { lightGroups: Map<String, LightGroup> ->
-        _groups.value = lightGroups
+        _allGroups.value = lightGroups
       },
       { error: Exception ->
-        _fetchError.value = error
+        _groupFetchError.value = error
+      }
+    )
+    fetchLights(
+      _context,
+      { lights: Map<String, Light> ->
+        _allLights.value = lights
+      },
+      { error: Exception ->
+        println(error)
       }
     )
   }
@@ -123,7 +139,7 @@ class LightsWidgetViewModel(context: Context) : ViewModel() {
     changeGroupState(
       groupId, LightGroupStateAction(on = isOn), _context,
       {
-        onLightGroupsRequired()
+        onLightDataRequired()
       },
       {
         println(it)
@@ -132,20 +148,43 @@ class LightsWidgetViewModel(context: Context) : ViewModel() {
   }
 }
 
+private fun getMainLightsForBackgroundEffect(
+  allGroups: Map<String, LightGroup>?, allLights: Map<String, Light>?
+): List<Light> {
+  if (allGroups == null || allLights == null) return listOf()
+
+  val group = allGroups.get(mainGroupId)
+  if (group == null) return listOf()
+
+  return group.lights.map { lightId ->
+    val light = allLights.get(lightId)
+    // This shouldn't happen
+    if (light == null) return@getMainLightsForBackgroundEffect listOf()
+
+    light
+  }.filter { it.state.on }
+}
+
 @Composable
-fun LightsWidget(viewModel: LightsWidgetViewModel) {
+fun LightsWidget(viewModel: LightsWidgetViewModel, onMainLightGroupUpdated: (lights: List<Light>) -> Unit) {
   val allGroups by viewModel.allGroups.observeAsState()
-  val fetchError by viewModel.fetchError.observeAsState()
+  val allLights by viewModel.allLights.observeAsState()
+  val fetchError by viewModel.groupFetchError.observeAsState()
 
   PollEffect(Unit, secondsToMs(10)) {
-    viewModel.onLightGroupsRequired()
+    viewModel.onLightDataRequired()
+  }
+
+  LaunchedEffect(allGroups, allLights) {
+    val lights = getMainLightsForBackgroundEffect(allGroups , allLights)
+    onMainLightGroupUpdated(lights)
   }
 
   LightsWidgetView(
     hueGroupIds,
     allGroups,
     fetchError,
-    { viewModel.onLightGroupsRequired() },
+    { viewModel.onLightDataRequired() },
     { groupId, isOn -> viewModel.onToggleGroup(groupId, isOn) },
   )
 }
