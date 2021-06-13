@@ -7,7 +7,9 @@ import androidx.core.graphics.set
 import getLightColor
 import net.jeremycasey.homemonitor.widgets.lights.Light
 
-
+/**
+ * As the lights change, we also change the background to match
+ */
 fun generateBackgroundImage(activity: Activity, lights: List<Light>): Bitmap {
   val size = getScreenSize(activity)
   val colors = getColorsFromLights(lights)
@@ -21,6 +23,7 @@ fun generateBackgroundImage(activity: Activity, lights: List<Light>): Bitmap {
       bitmap.set(x, y, color)
     }
   }
+  addGaussianBlur(bitmap)
   return bitmap
 }
 
