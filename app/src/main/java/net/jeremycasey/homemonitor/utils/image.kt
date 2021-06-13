@@ -1,6 +1,13 @@
 package net.jeremycasey.homemonitor.utils
 
 import android.graphics.Bitmap
+import android.graphics.Color
+
+fun createEmptyImage(color: Int): Bitmap {
+  val emptyBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+  emptyBitmap.setPixel(0, 0, Color.WHITE)
+  return emptyBitmap
+}
 
 // Copied from: https://stackoverflow.com/a/10028267
 // Stack Blur Algorithm by Mario Klingemann <mario@quasimondo.com>

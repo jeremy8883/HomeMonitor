@@ -15,6 +15,10 @@ fun generateBackgroundImage(activity: Activity, lights: List<Light>): Bitmap {
   val colors = getColorsFromLights(lights)
   val colorCount = colors.size
 
+  if (colorCount == 0) {
+    return createEmptyImage(Color.WHITE)
+  }
+
   val bitmap = Bitmap.createBitmap(size.width, size.height, Bitmap.Config.ARGB_8888)
   for (y in 0 until bitmap.height) {
     val index = Math.floor(y.toDouble() / (size.height.toDouble() / colorCount.toDouble())).toInt()
@@ -27,8 +31,5 @@ fun generateBackgroundImage(activity: Activity, lights: List<Light>): Bitmap {
 }
 
 private fun getColorsFromLights(lights: List<Light>): List<Int> {
-  if (lights.size == 0) {
-    return listOf(Color.BLACK)
-  }
   return lights.map { getLightColor(it) }
 }
