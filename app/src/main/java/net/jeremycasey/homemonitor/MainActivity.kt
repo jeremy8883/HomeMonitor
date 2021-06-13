@@ -30,6 +30,7 @@ import net.jeremycasey.homemonitor.widgets.weather.WeatherWidgetViewModelFactory
 import android.widget.Toast
 
 import android.content.Intent
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.runtime.*
@@ -100,14 +101,15 @@ class MainActivity : ComponentActivity() {
 
     setContent {
       HomeMonitorTheme {
-        var backgroundEffectLights by remember { mutableStateOf<List<Light>>(listOf()) }
-        // TODO memoize this
-        val background = BitmapPainter(generateBackgroundImage(this, backgroundEffectLights).asImageBitmap())
-        println(backgroundEffectLights)
+        var background by remember { mutableStateOf<Bitmap>(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)) }
 
         // A surface container using the 'background' color from the theme
         Surface(color = MaterialTheme.colors.background) {
-          Image(painter = background, contentDescription = null, modifier = Modifier.fillMaxSize(1f), contentScale = ContentScale.FillBounds)
+          Image(
+            painter = BitmapPainter(background.asImageBitmap()),
+            contentDescription = null, modifier = Modifier.fillMaxSize(1f),
+            contentScale = ContentScale.FillBounds
+          )
           Column (modifier = Modifier.padding(rootPadding.dp)) {
             Row(Modifier.fillMaxHeight(0.5f)) {
               Column(
@@ -142,7 +144,7 @@ class MainActivity : ComponentActivity() {
               }
               Column(Modifier.fillMaxSize(1f)) {
                 WidgetWrapper(1f, 0.5f) {
-                  LightsWidget(lightsViewModel, { backgroundEffectLights = it })
+                  LightsWidget(lightsViewModel, { background = generateBackgroundImage(this@MainActivity, it) })
                 }
                 WidgetWrapper(1f, 1f) {
                   ClockWidget()
