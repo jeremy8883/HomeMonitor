@@ -21,14 +21,14 @@ val subjects = listOf(
 
 val wetCatFood = Activity(
   id = "201",
-  name = "Wet Cat Activity",
-  shortName = "Wet",
+  name = "Wet Cat Food",
+  shortName = "Wet Food",
   seq = 0,
 )
-val dogFood = Activity(
+val wetDogFood = Activity(
   id = "203",
-  name = "Dog food",
-  shortName = "Dinner",
+  name = "Wed Dog food",
+  shortName = "Wet food",
   seq = 0,
 )
 val walk = Activity(
@@ -39,7 +39,7 @@ val walk = Activity(
 )
 val activities = listOf(
   wetCatFood,
-  dogFood,
+  wetDogFood,
   walk,
 )
 
@@ -74,7 +74,7 @@ val petPeriods = listOf(
   ActivityPeriod(
     id = "406",
     subjectId = billy.id,
-    activityId = dogFood.id,
+    activityId = wetDogFood.id,
     periodId = evening.id,
   ),
   ActivityPeriod(
