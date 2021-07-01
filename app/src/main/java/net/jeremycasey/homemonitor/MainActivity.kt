@@ -101,7 +101,7 @@ class MainActivity : ComponentActivity() {
     broadcastIntentToViewModelsIfNeeded(this.intent)
 
     setContent {
-      HomeMonitorTheme {
+      HomeMonitorTheme(true) {
         var background by remember { mutableStateOf<Bitmap>(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)) }
 
         // A surface container using the 'background' color from the theme
