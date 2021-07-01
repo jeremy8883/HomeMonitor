@@ -25,7 +25,7 @@ fun ButtonSwitch(isChecked: Boolean, onCheckedChange: (isChecked: Boolean) -> Un
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center
   ) {
-    Switch(isChecked, {})
+    Switch(isChecked, { onCheckedChange(!isChecked) })
     Text(text, style = TextStyle(
       color = Color(0xFF878787),
       fontSize = 14.sp,
