@@ -197,26 +197,6 @@ fun LightsWidget(viewModel: LightsWidgetViewModel, onMainLightGroupUpdated: (lig
 }
 
 @Composable
-fun ButtonSwitch(isChecked: Boolean, onCheckedChange: (isChecked: Boolean) -> Unit, text: String) {
-  Column(
-    Modifier
-      .width(80.dp)
-      .height(80.dp)
-      .clickable(onClick = { onCheckedChange(!isChecked) })
-      .border(1.dp, Color.Gray),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center
-  ) {
-    Switch(isChecked, {})
-    Text(text, style = TextStyle(
-      color = Color(0xFF878787),
-      fontSize = 14.sp,
-      textAlign = TextAlign.Center,
-    ), modifier = Modifier.padding(0.dp, 5.dp, 0.dp, 0.dp))
-  }
-}
-
-@Composable
 @OptIn(ExperimentalFoundationApi::class)
 fun LightsWidgetView(
   groupIdsToShow: List<String>,
