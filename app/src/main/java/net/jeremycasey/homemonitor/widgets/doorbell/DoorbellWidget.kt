@@ -135,7 +135,7 @@ fun DoorbellWidgetView(latestEvent: DoorbellEvent?, now: DateTime, onCardTouch: 
   }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 400, heightDp = 200)
 @Composable
 fun DefaultPreview() {
   HomeMonitorTheme {
@@ -150,7 +150,7 @@ fun DefaultPreview() {
   }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 400, heightDp = 200)
 @Composable
 fun EmptyPreview() {
   HomeMonitorTheme {

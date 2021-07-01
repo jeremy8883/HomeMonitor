@@ -1,28 +1,27 @@
 package net.jeremycasey.homemonitor.utils
 
-import org.joda.time.format.PeriodFormatterBuilder
 import org.joda.time.DateTime
 import org.joda.time.Period
 
 fun toRelativeDateString(date: DateTime, now: DateTime): String {
   val period = Period(date, now)
+  val duration = period.toStandardDuration()
 
-  if (period.toStandardDuration().standardSeconds <= 60) {
+  if (duration.standardSeconds < 60L) {
     return "Just now"
+  } else if (duration.standardMinutes == 1L) {
+    return "A minute ago"
+  } else if (duration.standardMinutes < 60L) {
+    return "${duration.standardMinutes} minutes ago"
+  } else if (duration.standardHours == 1L) {
+    return "An hour ago"
+  } else if (duration.standardHours < 24L) {
+    return "${duration.standardMinutes} hours ago"
+  } else if (duration.standardDays == 1L) {
+    return "A day ago"
+  } else {
+    return "${duration.standardDays} days ago"
   }
-
-  val formatter = PeriodFormatterBuilder()
-    .appendSeconds().appendSuffix(" seconds ago\n")
-    .appendMinutes().appendSuffix(" minutes ago\n")
-    .appendHours().appendSuffix(" hours ago\n")
-    .appendDays().appendSuffix(" days ago\n")
-    .appendWeeks().appendSuffix(" weeks ago\n")
-    .appendMonths().appendSuffix(" months ago\n")
-    .appendYears().appendSuffix(" years ago\n")
-    .printZeroNever()
-    .toFormatter()
-
-  return formatter.print(period)
 }
 
 fun secondsToMs(seconds: Long): Long {
