@@ -202,7 +202,7 @@ private fun findLogByActivityPeriod(
   activityPeriodId: String
 ) = logs.find { l -> l.activityPeriodId == activityPeriodId }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 400, heightDp = 200)
 @Composable
 fun DefaultPreview() {
   HomeMonitorTheme {
@@ -213,7 +213,7 @@ fun DefaultPreview() {
   }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 400, heightDp = 200)
 @Composable
 fun LoadingPreview() {
   HomeMonitorTheme {
