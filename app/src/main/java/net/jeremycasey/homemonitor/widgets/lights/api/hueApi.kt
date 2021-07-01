@@ -12,9 +12,6 @@ import net.jeremycasey.homemonitor.private.*
 import net.jeremycasey.homemonitor.widgets.lights.*
 import org.json.JSONObject
 
-
-
-
 private fun getHueUrl(path: String): String {
   return "${hueHostAddress}api/${hueUsername}${path}"
 }
