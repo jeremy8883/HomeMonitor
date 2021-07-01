@@ -25,12 +25,6 @@ val wetCatFood = Activity(
   shortName = "Wet",
   seq = 0,
 )
-val dryCatFood = Activity(
-  id = "202",
-  name = "Dry Cat Activity",
-  shortName = "Dry",
-  seq = 1,
-)
 val dogFood = Activity(
   id = "203",
   name = "Dog food",
@@ -45,7 +39,6 @@ val walk = Activity(
 )
 val activities = listOf(
   wetCatFood,
-  dryCatFood,
   dogFood,
   walk,
 )
@@ -55,11 +48,6 @@ val morning = Period(
   name = "Morning",
   timeOfDay = LocalTime(7, 0),
 )
-val afternoon = Period(
-  id = "302",
-  name = "Afternoon",
-  timeOfDay = LocalTime(12, 0),
-)
 val evening = Period(
   id = "303",
   name = "Evening",
@@ -67,7 +55,6 @@ val evening = Period(
 )
 val periods = listOf(
   morning,
-  afternoon,
   evening,
 )
 
@@ -79,21 +66,9 @@ val petPeriods = listOf(
     periodId = morning.id,
   ),
   ActivityPeriod(
-    id = "402",
-    subjectId = ginger.id,
-    activityId = dryCatFood.id,
-    periodId = morning.id,
-  ),
-  ActivityPeriod(
     id = "403",
     subjectId = ginger.id,
     activityId = wetCatFood.id,
-    periodId = evening.id,
-  ),
-  ActivityPeriod(
-    id = "404",
-    subjectId = ginger.id,
-    activityId = dryCatFood.id,
     periodId = evening.id,
   ),
   ActivityPeriod(
@@ -106,6 +81,6 @@ val petPeriods = listOf(
     id = "407",
     subjectId = billy.id,
     activityId = walk.id,
-    periodId = afternoon.id,
+    periodId = morning.id,
   )
 )
