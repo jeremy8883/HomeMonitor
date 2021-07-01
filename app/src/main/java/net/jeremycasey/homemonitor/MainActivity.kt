@@ -112,48 +112,38 @@ class MainActivity : ComponentActivity() {
             modifier = Modifier.fillMaxSize(1f),
             contentScale = ContentScale.FillBounds
           )
-          Column (modifier = Modifier.padding(rootPadding.dp)) {
-            Row(Modifier.fillMaxHeight(0.5f)) {
-              Column(
-                Modifier
-                  .fillMaxWidth(0.66f)
-                  .fillMaxHeight()) {
-                Row(
-                  Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5f)) {
-                  WidgetWrapper(0.5f, 1f) {
-                    WeatherWidget(weatherWidgetViewModel)
-                  }
-                  WidgetWrapper(1f, 1f) {
-                    MessageBoardWidget(messageBoardViewModel)
-                  }
-                }
-                WidgetWrapper(1f, 1f) {
-                  PetLogWidget(petLogViewModel)
-                }
+          Row (modifier = Modifier.padding(rootPadding.dp)) {
+            Column(Modifier.fillMaxWidth(0.33f).fillMaxHeight()) {
+              WidgetWrapper(1f, 0.25f) {
+                WeatherWidget(weatherWidgetViewModel)
               }
-              WidgetWrapper(1f) {
-                PtvWidget(ptvViewModel)
+              WidgetWrapper(1f, 0.45f) {
+                PetLogWidget(petLogViewModel)
               }
-            }
-            Row (Modifier.fillMaxHeight(1f)) {
-              WidgetWrapper(0.34f) {
-                CalendarWidget(calendarViewModel)
-              }
-              WidgetWrapper(0.5f) {
+              WidgetWrapper {
                 DoorbellWidget(doorbellViewModel)
               }
-              Column(Modifier.fillMaxSize(1f)) {
-                WidgetWrapper(1f, 0.5f) {
-                  LightsWidget(
-                    lightsViewModel,
-                    { background = generateBackgroundImage(this@MainActivity, it) }
-                  )
-                }
-                WidgetWrapper(1f, 1f) {
-                  ClockWidget()
-                }
+            }
+            Column(Modifier.fillMaxWidth(0.5f).fillMaxHeight()) {
+              WidgetWrapper(1f, 0.33f) {
+                MessageBoardWidget(messageBoardViewModel)
+              }
+              WidgetWrapper {
+                CalendarWidget(calendarViewModel)
+              }
+            }
+            Column(Modifier.fillMaxSize()) {
+              WidgetWrapper(1f, 0.5f) {
+                PtvWidget(ptvViewModel)
+              }
+              WidgetWrapper(1f, 0.5f) {
+                LightsWidget(
+                  lightsViewModel,
+                  { background = generateBackgroundImage(this@MainActivity, it) }
+                )
+              }
+              WidgetWrapper(1f, 1f) {
+                ClockWidget()
               }
             }
           }
