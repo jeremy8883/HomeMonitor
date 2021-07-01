@@ -10,7 +10,7 @@ import java.util.*
 
 var imageCache = WeakHashMap<String, Bitmap>()
 
-val emptyImage = createEmptyImage(Color.WHITE)
+val emptyImage = createEmptyImage(Color.BLACK)
 
 /**
  * As the lights change, we also change the background to match
