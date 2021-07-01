@@ -124,23 +124,34 @@ private fun formatTime(event: CalendarEvent, now: DateTime): String {
   return event.startDateTime.toString("HH:mm")
 }
 
+private fun <T> sortEvents(
+  events: List<T>,
+  getEvent: (item: T) -> CalendarEvent
+): List<T> {
+  return events.sortedBy { getEvent(it).endDateTime.millis }
+    .sortedBy {
+      val event = getEvent(it)
+      if (event.isAllDay) {
+        event.startDateTime.withTimeAtStartOfDay().millis
+      } else {
+        event.startDateTime.millis
+      }
+    }
+}
+
 private fun groupEventsByDay(events: List<CalendarEvent>): List<GroupedEvent> {
   val grouped = events.groupBy {
     it.startDateTime.toLocalDate().toString("yyyy-MM-dd")
   }
 
-  return grouped.map {
+  val groupedEvents = grouped.map {
     GroupedEvent(
       date = DateTime(it.key),
-      events = it.value
-        .sortedBy { it.endDateTime.millis }
-        .sortedBy { if (it.isAllDay) {
-          it.startDateTime.withTimeAtStartOfDay().millis
-        } else {
-          it.startDateTime.millis
-        } }
+      events = sortEvents(it.value, { it })
     )
   }
+
+  return sortEvents(groupedEvents, { it.events.get(0) })
 }
 
 private fun getGroupName(date: DateTime, now: DateTime): String {
