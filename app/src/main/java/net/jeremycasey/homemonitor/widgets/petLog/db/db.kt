@@ -72,7 +72,7 @@ class PetLogDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
   }
 
   companion object {
-    const val DATABASE_VERSION = 11
+    const val DATABASE_VERSION = 12
     const val DATABASE_NAME = "PetLog"
   }
 }

@@ -18,6 +18,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import net.jeremycasey.homemonitor.composables.ButtonSwitch
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.widgets.petLog.db.*
 import net.jeremycasey.homemonitor.composables.LoadingPanel
@@ -174,15 +175,14 @@ fun PetLogWidgetView(
               val activity = findActivity(activities, ap.activityId)
               val log = findLogByActivityPeriod(todaysLogs, ap.id)
               Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(5.dp, 0.dp)) {
-                Checkbox(
-                  checked = log != null,
+                ButtonSwitch(
+                  isChecked = log != null,
                   onCheckedChange = {
                     if (log == null) onLogActivity(ap.id)
                     else onRemoveLog(log.id)
                   },
-                  modifier = Modifier.padding(0.dp, 0.dp, 5.dp, 0.dp)
+                  text = "${activity?.shortName}"
                 )
-                Text("${activity?.shortName}")
               }
             }
           }
@@ -202,7 +202,7 @@ private fun findLogByActivityPeriod(
   activityPeriodId: String
 ) = logs.find { l -> l.activityPeriodId == activityPeriodId }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 400, heightDp = 200)
 @Composable
 fun DefaultPreview() {
   HomeMonitorTheme {
@@ -213,7 +213,7 @@ fun DefaultPreview() {
   }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 400, heightDp = 200)
 @Composable
 fun LoadingPreview() {
   HomeMonitorTheme {

@@ -5,7 +5,7 @@ import android.graphics.Color
 
 fun createEmptyImage(color: Int): Bitmap {
   val emptyBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-  emptyBitmap.setPixel(0, 0, Color.WHITE)
+  emptyBitmap.setPixel(0, 0, color)
   return emptyBitmap
 }
 

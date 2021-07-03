@@ -1,7 +1,13 @@
 package net.jeremycasey.homemonitor.widgets.lights
 
 import android.content.Context
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -12,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -190,6 +197,7 @@ fun LightsWidget(viewModel: LightsWidgetViewModel, onMainLightGroupUpdated: (lig
 }
 
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 fun LightsWidgetView(
   groupIdsToShow: List<String>,
   allGroups: Map<String, LightGroup>?,
@@ -211,25 +219,12 @@ fun LightsWidgetView(
   }
 
   WidgetCard {
-    groupIdsToShow.forEach { groupId ->
-      val group = allGroups.get(groupId) ?: return@forEach
+    LazyVerticalGrid(cells = GridCells.Adaptive(minSize = 80.dp)) {
+      items(groupIdsToShow.size) { index ->
+        val groupId = groupIdsToShow[index]
+        val group = allGroups.get(groupId)!!
 
-      Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(0.dp, 10.dp)
-      ) {
-        Switch(
-          checked = group.state.anyOn,
-          onCheckedChange = { onToggle(groupId, it) }
-        )
-        Text(
-          text = group.name,
-          style = TextStyle(
-            color = Color(0xFF878787),
-            fontSize = 14.sp,
-          )
-        )
+        ButtonSwitch(group.state.anyOn, { onToggle(groupId, it) }, group.name)
       }
     }
   }
