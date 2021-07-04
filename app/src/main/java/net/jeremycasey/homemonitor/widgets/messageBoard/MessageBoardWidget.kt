@@ -3,11 +3,9 @@ package net.jeremycasey.homemonitor.widgets.messageBoard
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,6 +26,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import net.jeremycasey.homemonitor.R
+import net.jeremycasey.homemonitor.composables.EmptyPanel
 import net.jeremycasey.homemonitor.composables.Scrollable
 import net.jeremycasey.homemonitor.composables.WidgetCard
 import net.jeremycasey.homemonitor.private.messageBoardItems
@@ -97,10 +96,7 @@ fun MessageBoardWidget(viewModel: MessageBoardWidgetViewModel) {
 fun MessageBoardWidgetView(postedItems: List<MessageItem>, onClearItem: (postedItem: MessageItem) -> Unit) {
   WidgetCard(scrollable = Scrollable.horizontal) {
     if (postedItems.isEmpty()) {
-      Text(
-        text ="There are no messages",
-        style = TextStyle(textAlign = TextAlign.Center, color = Color.Gray, fontStyle = FontStyle.Italic)
-      )
+      EmptyPanel("There are no messages")
     } else {
       Row(
         horizontalArrangement = Arrangement.Center,

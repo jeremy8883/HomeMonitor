@@ -24,6 +24,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import net.jeremycasey.homemonitor.R
+import net.jeremycasey.homemonitor.composables.EmptyPanel
 import net.jeremycasey.homemonitor.composables.WidgetCard
 import net.jeremycasey.homemonitor.composables.WithCurrentTime
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
@@ -117,20 +118,23 @@ fun DoorbellWidget(viewModel: DoorbellWidgetViewModel) {
 
 @Composable
 fun DoorbellWidgetView(latestEvent: DoorbellEvent?, now: DateTime, onCardTouch: () -> Unit) {
+  if (latestEvent == null) {
+    WidgetCard {
+      EmptyPanel("Thumbnail will show upon first doorbell event")
+    }
+    return
+  }
   WidgetCard(onCardTouch) {
-    Text("Doorbell", style = MaterialTheme.typography.h4)
-    if (latestEvent != null) {
-      Column {
-        Text(latestEvent.title)
-        Text(
-          toRelativeDateString(latestEvent.dateTime, now),
-          style = MaterialTheme.typography.subtitle1
-        )
-        Image(
-          painter = BitmapPainter(latestEvent.picture.asImageBitmap()),
-          contentDescription = null
-        )
-      }
+    Column {
+      Text(latestEvent.title)
+      Text(
+        toRelativeDateString(latestEvent.dateTime, now),
+        style = MaterialTheme.typography.subtitle1
+      )
+      Image(
+        painter = BitmapPainter(latestEvent.picture.asImageBitmap()),
+        contentDescription = null
+      )
     }
   }
 }
