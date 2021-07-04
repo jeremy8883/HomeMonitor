@@ -18,12 +18,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import net.jeremycasey.homemonitor.composables.ButtonSwitch
+import net.jeremycasey.homemonitor.composables.*
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.widgets.petLog.db.*
-import net.jeremycasey.homemonitor.composables.LoadingPanel
-import net.jeremycasey.homemonitor.composables.WidgetCard
-import net.jeremycasey.homemonitor.composables.WithCurrentTime
 import net.jeremycasey.homemonitor.utils.hoursToMs
 import org.joda.time.DateTime
 import java.util.*
@@ -181,7 +178,8 @@ fun PetLogWidgetView(
                     if (log == null) onLogActivity(ap.id)
                     else onRemoveLog(log.id)
                   },
-                  text = "${activity?.shortName}"
+                  text = "${activity?.shortName}",
+                  variant = Variant.checkbox
                 )
               }
             }

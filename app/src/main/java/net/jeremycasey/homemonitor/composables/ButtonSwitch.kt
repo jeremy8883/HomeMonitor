@@ -3,6 +3,7 @@ package net.jeremycasey.homemonitor.composables
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -15,8 +16,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+enum class Variant {
+  switch,
+  checkbox
+}
+
 @Composable
-fun ButtonSwitch(isChecked: Boolean, onCheckedChange: (isChecked: Boolean) -> Unit, text: String) {
+fun ButtonSwitch(isChecked: Boolean, onCheckedChange: (isChecked: Boolean) -> Unit, text: String, variant: Variant = Variant.switch) {
   var isCheckedOptimistic by remember { mutableStateOf<Boolean?>(null) }
 
   val isCheckedToShow: Boolean = if (isCheckedOptimistic != null)
@@ -38,7 +44,11 @@ fun ButtonSwitch(isChecked: Boolean, onCheckedChange: (isChecked: Boolean) -> Un
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center
   ) {
-    Switch(isChecked, { handleCheckedChanged() })
+    if (variant == Variant.checkbox) {
+      Checkbox(isChecked, { handleCheckedChanged() })
+    } else {
+      Switch(isChecked, { handleCheckedChanged() })
+    }
     Text(text, style = TextStyle(
       color = Color(0xFF878787),
       fontSize = 14.sp,
