@@ -1,5 +1,6 @@
 package net.jeremycasey.homemonitor.composables
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import net.jeremycasey.homemonitor.utils.secondsToMs
 
 enum class Variant {
   switch,
@@ -30,9 +32,15 @@ fun ButtonSwitch(isChecked: Boolean, onCheckedChange: (isChecked: Boolean) -> Un
   else
     isChecked
 
+  val timedResetOptimism = Debounced(secondsToMs(5)) {
+    println("cleared")
+    isCheckedOptimistic = null
+  }
+
   val handleCheckedChanged = {
     isCheckedOptimistic = !isCheckedToShow
     onCheckedChange(!isCheckedToShow)
+    timedResetOptimism()
   }
 
   Column(
@@ -45,9 +53,9 @@ fun ButtonSwitch(isChecked: Boolean, onCheckedChange: (isChecked: Boolean) -> Un
     verticalArrangement = Arrangement.Center
   ) {
     if (variant == Variant.checkbox) {
-      Checkbox(isChecked, { handleCheckedChanged() })
+      Checkbox(isCheckedToShow, { handleCheckedChanged() })
     } else {
-      Switch(isChecked, { handleCheckedChanged() })
+      Switch(isCheckedToShow, { handleCheckedChanged() })
     }
     Text(text, style = TextStyle(
       color = Color(0xFF878787),
