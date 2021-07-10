@@ -13,6 +13,7 @@ A private android app that I use for my home tablet, which I hang on the wall.
 * [ ] Barcode scanner to add items to shopping list
 * [X] Notifications when we need to bring items upstairs
 * [X] Calendar
+* [X] Vacuum
 
 ## Getting started
 
@@ -60,6 +61,15 @@ val messageBoardItems = mapOf<String, MessageItemConfig>(
 val hueHostAddress = "http://10.0.0.111/"
 val hueUsername = "abcdef1234" // get from here: https://developers.meethue.com/develop/get-started-2/
 val hueGroupIds = arrayOf("1", "5", "4")
+
+// The background will match whatever colour these lights are set to
+val mainGroupId = "1"
+
+// Roomba vacumm
+// Run the `getpassword` script here: https://github.com/koalazak/dorita980
+val roombaBlid = "12ABC456"
+val roombaPassword = ":1:1rsteincyu238903"
+val roombaAddress = "192.168.0.100"
 ```
 
 ### Doorbell Widget

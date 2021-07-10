@@ -1,12 +1,10 @@
 package net.jeremycasey.homemonitor.widgets.weather
 
 import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -22,9 +20,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import net.jeremycasey.homemonitor.composables.*
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
-import net.jeremycasey.homemonitor.utils.round
 import net.jeremycasey.homemonitor.utils.hoursToMs
-import net.jeremycasey.homemonitor.widgets.weather.api.*
+import net.jeremycasey.homemonitor.utils.round
+import net.jeremycasey.homemonitor.widgets.weather.api.fetchCurrentWeather
 
 val mockCurrentWeather = CurrentWeather(
   coord = Coord( lon = 144.9633, lat = -37.814 ),

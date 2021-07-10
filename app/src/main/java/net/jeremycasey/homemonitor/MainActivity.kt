@@ -48,6 +48,10 @@ import net.jeremycasey.homemonitor.widgets.lights.LightsWidgetViewModel
 import net.jeremycasey.homemonitor.widgets.lights.LightsWidgetViewModelFactory
 import net.jeremycasey.homemonitor.widgets.messageBoard.MessageBoardWidgetViewModel
 import net.jeremycasey.homemonitor.widgets.messageBoard.MessageBoardWidgetViewModelFactory
+import net.jeremycasey.homemonitor.widgets.vacuum.VacuumWidget
+import net.jeremycasey.homemonitor.widgets.vacuum.VacuumWidgetView
+import net.jeremycasey.homemonitor.widgets.vacuum.VacuumWidgetViewModel
+import net.jeremycasey.homemonitor.widgets.vacuum.VacuumWidgetViewModelFactory
 
 
 private val rootPadding = 10
@@ -98,6 +102,10 @@ class MainActivity : ComponentActivity() {
       LightsWidgetViewModelFactory(this)
     }
 
+    val vacuumViewModel by viewModels<VacuumWidgetViewModel>() {
+      VacuumWidgetViewModelFactory(this)
+    }
+
     broadcastIntentToViewModelsIfNeeded(this.intent)
 
     setContent {
@@ -113,7 +121,10 @@ class MainActivity : ComponentActivity() {
             contentScale = ContentScale.FillBounds
           )
           Row (modifier = Modifier.padding(rootPadding.dp)) {
-            Column(Modifier.fillMaxWidth(0.33f).fillMaxHeight()) {
+            Column(
+              Modifier
+                .fillMaxWidth(0.33f)
+                .fillMaxHeight()) {
               WidgetWrapper(1f, 0.25f) {
                 WeatherWidget(weatherWidgetViewModel)
               }
@@ -124,12 +135,18 @@ class MainActivity : ComponentActivity() {
                 DoorbellWidget(doorbellViewModel)
               }
             }
-            Column(Modifier.fillMaxWidth(0.5f).fillMaxHeight()) {
+            Column(
+              Modifier
+                .fillMaxWidth(0.5f)
+                .fillMaxHeight()) {
               WidgetWrapper(1f, 0.33f) {
                 MessageBoardWidget(messageBoardViewModel)
               }
-              WidgetWrapper {
+              WidgetWrapper(1f, 0.5f) {
                 CalendarWidget(calendarViewModel)
+              }
+              WidgetWrapper {
+                VacuumWidget(vacuumViewModel)
               }
             }
             Column(Modifier.fillMaxSize()) {
