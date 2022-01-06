@@ -72,6 +72,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation("androidx.activity:activity-compose:1.3.0-alpha06")
     implementation("com.google.code.gson:gson:2.8.6")
+    // Used to communicate with the Roomba
+    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.4")
+
     testImplementation("junit:junit:4.+")
     androidTestImplementation("androidx.test.ext:junit:1.1.2")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")

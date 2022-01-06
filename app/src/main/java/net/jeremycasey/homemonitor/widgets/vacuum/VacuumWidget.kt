@@ -5,6 +5,7 @@ import VacuumState
 import android.content.Context
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,6 +19,8 @@ import net.jeremycasey.homemonitor.composables.PollEffect
 import net.jeremycasey.homemonitor.composables.WidgetCard
 import net.jeremycasey.homemonitor.ui.theme.HomeMonitorTheme
 import net.jeremycasey.homemonitor.utils.secondsToMs
+import net.jeremycasey.homemonitor.widgets.vacuum.api.fetchStatus
+import org.eclipse.paho.client.mqttv3.MqttException
 
 val stateMock = VacuumState(
   batPct = 89,
@@ -56,15 +59,15 @@ class VacuumWidgetViewModel(
   fun onVacuumDataRequired() {
     _stateFetchError.value = null
 
-//    fetchVacuumstate(
-//      _context,
-//      { Vacuum: Map<String, Light> ->
-//        _allVacuum.value = Vacuum
-//      },
-//      { error: Exception ->
-//        println(error)
-//      }
-//    )
+    fetchStatus(
+      { (state: VacuumState) ->
+        _state.value = state
+      },
+      { (error: MqttException) ->
+        _stateFetchError.value = error
+        println(error)
+      }
+    )
   }
 }
 
@@ -73,7 +76,7 @@ fun VacuumWidget(viewModel: VacuumWidgetViewModel) {
   val state by viewModel.state.observeAsState()
   val fetchError by viewModel.stateFetchError.observeAsState()
 
-  PollEffect(Unit, secondsToMs(10)) {
+  LaunchedEffect(Unit) {
     viewModel.onVacuumDataRequired()
   }
 
