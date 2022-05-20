@@ -16,7 +16,7 @@ fun toRelativeDateString(date: DateTime, now: DateTime): String {
   } else if (duration.standardHours == 1L) {
     return "An hour ago"
   } else if (duration.standardHours < 24L) {
-    return "${duration.standardMinutes} hours ago"
+    return "${duration.standardHours} hours ago"
   } else if (duration.standardDays == 1L) {
     return "A day ago"
   } else {
