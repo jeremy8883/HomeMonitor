@@ -41,6 +41,7 @@ android {
         kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
         kotlinCompilerVersion = "1.4.32"
     }
+  namespace = "net.jeremycasey.homemonitor"
 }
 
 dependencies {
