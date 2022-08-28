@@ -70,6 +70,12 @@ val mainGroupId = "1"
 val roombaBlid = "12ABC456"
 val roombaPassword = ":1:1rsteincyu238903"
 val roombaAddress = "192.168.0.100"
+
+// Home Assistant
+val homeAssistantHostAddress = "http://10.0.0.888:8123/"
+val homeAssistantAccessToken = "abcdef1234" // get from http://homeassistant.local:8123/profile under "Long-Lived Access Tokens"
+val homeAssistantTvOnScriptName = "executa_hisense_turn_on" // Set up in the scripts.yml file in Home Assistant, https://www.home-assistant.io/integrations/script/
+val homeAssistantTvOffScriptName = "executa_hisense_turn_off" // Set up in the scripts.yml file in Home Assistant, https://www.home-assistant.io/integrations/script/
 ```
 
 ### Doorbell Widget

@@ -48,6 +48,9 @@ import net.jeremycasey.homemonitor.widgets.lights.LightsWidgetViewModel
 import net.jeremycasey.homemonitor.widgets.lights.LightsWidgetViewModelFactory
 import net.jeremycasey.homemonitor.widgets.messageBoard.MessageBoardWidgetViewModel
 import net.jeremycasey.homemonitor.widgets.messageBoard.MessageBoardWidgetViewModelFactory
+import net.jeremycasey.homemonitor.widgets.tv.TvWidget
+import net.jeremycasey.homemonitor.widgets.tv.TvWidgetViewModel
+import net.jeremycasey.homemonitor.widgets.tv.TvWidgetViewModelFactory
 import net.jeremycasey.homemonitor.widgets.vacuum.VacuumWidget
 import net.jeremycasey.homemonitor.widgets.vacuum.VacuumWidgetView
 import net.jeremycasey.homemonitor.widgets.vacuum.VacuumWidgetViewModel
@@ -101,10 +104,12 @@ class MainActivity : ComponentActivity() {
     val lightsViewModel by viewModels<LightsWidgetViewModel>() {
       LightsWidgetViewModelFactory(this)
     }
-
-    val vacuumViewModel by viewModels<VacuumWidgetViewModel>() {
-      VacuumWidgetViewModelFactory(this)
+    val tvViewModel by viewModels<TvWidgetViewModel>() {
+      TvWidgetViewModelFactory(this)
     }
+//    val vacuumViewModel by viewModels<VacuumWidgetViewModel>() {
+//      VacuumWidgetViewModelFactory(this)
+//    }
 
     broadcastIntentToViewModelsIfNeeded(this.intent)
 
@@ -145,8 +150,11 @@ class MainActivity : ComponentActivity() {
               WidgetWrapper(1f, 0.5f) {
                 CalendarWidget(calendarViewModel)
               }
-              WidgetWrapper {
-                VacuumWidget(vacuumViewModel)
+//              WidgetWrapper {
+//                VacuumWidget(vacuumViewModel)
+//              }
+              WidgetWrapper(1f, 1f) {
+                ClockWidget()
               }
             }
             Column(Modifier.fillMaxSize()) {
@@ -159,8 +167,8 @@ class MainActivity : ComponentActivity() {
                   { background = generateBackgroundImage(this@MainActivity, it) }
                 )
               }
-              WidgetWrapper(1f, 1f) {
-                ClockWidget()
+              WidgetWrapper(1f, 0.5f) {
+                TvWidget(tvViewModel)
               }
             }
           }
